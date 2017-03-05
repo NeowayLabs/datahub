@@ -1,10 +1,10 @@
 {
-	"jobId": 20,
-	"title": "blah blah blah blah",
-	"describe": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-	"accuracyRequired": 90.5,
-	"deadline": "2017-03-20",
-	"proposedPrice": 15000.00,
-	"trainingSample": "/upload/jobs/20/training.csv",
-	"testSample": "/upload/jobs/20/test.csv"
+    "jobId": 20,
+    "title": "blah blah blah blah",
+    "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+    "accuracyRequired": 90.5,
+    "deadline": "2017-03-20",
+    "proposedPrice": 15000.00,
+    "trainingSample": "/upload/jobs/20/training.csv",
+    "testSample": "/upload/jobs/20/test.csv"
 }

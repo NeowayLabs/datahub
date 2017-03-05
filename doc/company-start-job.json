@@ -1,7 +1,7 @@
 {
     "jobId": 6,
     "title": "blah blah blah",
-    "describe": "Homicide Report blah blah blah ....",
+    "description": "Homicide Report blah blah blah ....",
     "startDate": "2017-03-03",
     "endDate": "2017-06-03",
     "scientists": [

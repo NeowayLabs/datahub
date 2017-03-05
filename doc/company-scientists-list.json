@@ -1,44 +1,44 @@
 [
-	{
-		"scientistId": 1,
-		"image": "/images/scientists/1.jpg",
-		"name": "Paulo Pizarro",
-		"stars": 2,
-		"likes": 300
-	},
-	{
-		"scientistId": 2,
-		"image": "/images/scientists/2.jpg",
-		"name": "Tiago Katcipis",
-		"stars": 5,
-		"likes": 500
-	},
-	{
-		"scientistId": 3,
-		"image": "/images/scientists/3.jpg",
-		"name": "Juliano Galgaro",
-		"stars": 4,
-		"likes": 400
-	},
-	{
-		"scientistId": 4,
-		"image": "/images/scientists/4.jpg",
-		"name": "Amanda Rosa",
-		"stars": 3,
-		"likes": 100
-	},
-	{
-		"scientistId": 5,
-		"image": "/images/scientists/5.jpg",
-		"name": "Jefferson Amorin",
-		"stars": 5,
-		"likes": 700
-	},
-	{
-		"scientistId": 6,
-		"image": "/images/scientists/6.jpg",
-		"name": "Caio Silva",
-		"stars": 4,
-		"likes": 100
-	}
+    {
+        "scientistId": 1,
+        "image": "/images/scientists/1.jpg",
+        "name": "Paulo Pizarro",
+        "stars": 2,
+        "likes": 300
+    },
+    {
+        "scientistId": 2,
+        "image": "/images/scientists/2.jpg",
+        "name": "Tiago Katcipis",
+        "stars": 5,
+        "likes": 500
+    },
+    {
+        "scientistId": 3,
+        "image": "/images/scientists/3.jpg",
+        "name": "Juliano Galgaro",
+        "stars": 4,
+        "likes": 400
+    },
+    {
+        "scientistId": 4,
+        "image": "/images/scientists/4.jpg",
+        "name": "Amanda Rosa",
+        "stars": 3,
+        "likes": 100
+    },
+    {
+        "scientistId": 5,
+        "image": "/images/scientists/5.jpg",
+        "name": "Jefferson Amorin",
+        "stars": 5,
+        "likes": 700
+    },
+    {
+        "scientistId": 6,
+        "image": "/images/scientists/6.jpg",
+        "name": "Caio Silva",
+        "stars": 4,
+        "likes": 100
+    }
 ]
