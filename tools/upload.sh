@@ -3,11 +3,15 @@
 set -o errexit
 set -o nounset
 
+echo "run: "$0" <server> <dataset> <filepath>"
+echo "available datasets are: (trainingset, testset)"
+
 server=$1
-file=$2
+dataset=$2
+file=$3
 
-echo "uploading local file: "$file" to : "$server
+echo "uploading dataset: "$dataset" filepath: "$file" to : "$server
 
-curl -v --data-binary "@$file" http://$server/datahub/upload
+curl -v  -F "$dataset=@$file" http://$server/datahub/upload
 
 echo "done"
