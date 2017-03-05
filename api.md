@@ -87,14 +87,6 @@ Obs: job será criado com o status de "pending"
 
 ### Upload de arquivos do job
 POST /companies/job/_id_/upload
-```
-{
-    "datasets": {
-        "training": "training.csv",
-        "test": "test.csv",
-        "result": "result.csv"
-    }
-}
 
 response:
 200 OK
@@ -112,9 +104,9 @@ GET /jobs/_id_
     "proposedPrice": 15000.00,
 	"status": "pending",
     "datasets": {
-        "training": "/files/jobs/6/training.csv",
-        "test": "/files/jobs/6/test.csv",
-        "result": "/files/jobs/6/result.csv"
+        "training": "/files/jobs/6/trainingset.csv",
+        "challenge": "/files/jobs/6/testset.challenge.csv",
+        "result": "/files/jobs/6/testset.result.csv"
     },
     "candidates": [
         {
@@ -172,9 +164,9 @@ PUT /jobs/_id_
     "proposedPrice": 15000.00,
 	"status": "doing",
     "datasets": {
-        "training": "/files/jobs/6/training.csv",
-        "test": "/files/jobs/6/test.csv",
-        "result": "/files/jobs/6/test.csv"
+        "training": "/files/jobs/6/trainingset.csv",
+        "challenge": "/files/jobs/6/testset.challenge.csv",
+        "result": "/files/jobs/6/testset.result.csv"
     },
     "candidates": [
         {
