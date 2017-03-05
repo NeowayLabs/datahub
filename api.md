@@ -8,60 +8,131 @@ GET /companies/jobs
 
 response: 200 OK
 ```
-[
-	"new": [
-		{
-			"id": 20,
-			"company": "Neoway Business Solution",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		},
-		{
-			"id": 21,
-			"company": "Neoway Business Solution",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		},
-		{
-			"id": 22,
-			"company": "Facebook",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		}
-	],
-	"myJobs": [
-		{
-			"id": 12,
-			"company": "Netflix",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"accuracy": 70.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		}
-	],
-	"pending": [
-		{
-			"id": 12,
-			"company": "Twitter",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		}
-	]
-]
+{
+    "pending": [
+        {
+            "jobId": 8,
+            "title": "",
+            "description": "Homicide Report blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "scientists": [
+                {
+                    "id": 5,
+                    "name": "Juliano Galga",
+                    "rating": 5
+                },
+                {
+                    "id": 6,
+                    "name": "Caio Silva",
+                    "rating": 5
+                }
+            ],
+            "status": "pending"
+        }
+    ],
+    "doing": [
+        {
+            "jobId": 6,
+            "title": "",
+            "description": "blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+                "id": 4,
+                "name": "Amanda Rosa",
+                "rating": 3,
+                "accuracy": 50.5
+            },
+            "status": "doing"
+        },
+        {
+            "jobId": 7,
+            "title": "",
+            "description": "blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+                "id": 4,
+                "name": "Amanda Rosa",
+                "rating": 3,
+                "accuracy": 50.5
+            },
+            "status": "doing"
+        }
+    ],
+    "done": [
+        {
+            "jobId": 1,
+            "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
+            "description": "Homicide Report blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5,
+                "accuracy": 80.5
+            },
+            "status": "done"
+        },
+        {
+            "jobId": 2,
+            "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
+            "description": "Homicide Report blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5
+            },
+            "accuracy": 80.5,
+            "status": "done"
+        },
+        {
+            "jobId": 3,
+            "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
+            "description": "Homicide Report blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5
+            },
+            "accuracy": 80.5,
+            "status": "done"
+        },
+        {
+            "jobId": 4,
+            "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
+            "description": "Homicide Report blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+				"id": 2,
+            	"name": "Tiago Katcipis",
+            	"rating": 5,
+            	"accuracy": 80.5
+			},
+            "status": "done"
+        },
+        {
+            "jobId": 5,
+            "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
+            "description": "Homicide Report blah blah blah ....",
+            "lastUpdate": "2017-03-03",
+            "price": 15450.00,
+            "scientist": {
+				"id": 2,
+            	"name": "Tiago Katcipis",
+            	"rating": 5,
+            	"accuracy": 80.5
+			},
+            "status": "done"
+        }
+    ]
+}
 ```
 
 ### Criar novo job
@@ -263,6 +334,68 @@ response: 200 OK
         "stars": 4,
         "likes": 100
     }
+]
+```
+
+### Pegar lista de jobs do scientists
+GET /scientists/jobs
+
+respoonse: 200 OK
+
+```
+[
+	"new": [
+		{
+			"id": 20,
+			"company": "Neoway Business Solution",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		},
+		{
+			"id": 21,
+			"company": "Neoway Business Solution",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		},
+		{
+			"id": 22,
+			"company": "Facebook",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	],
+	"myJobs": [
+		{
+			"id": 12,
+			"company": "Netflix",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"accuracy": 70.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	],
+	"pending": [
+		{
+			"id": 12,
+			"company": "Twitter",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	]
 ]
 ```
 
