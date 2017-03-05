@@ -8,16 +8,20 @@ import (
 )
 
 type handler struct {
-	datafile string
-	log      *log.Logger
+	datadir string
+	log     *log.Logger
 }
 
 func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// NOT VALIDATING THE HTTP METHODS :-)
 	switch req.URL.Path {
-	case "/datahub/upload":
+	case "/datahub/upload/trainingset":
 		{
-			d.upload(w, req)
+			d.upload(w, req, "trainingset")
+		}
+	case "/datahub/upload/testset":
+		{
+			d.upload(w, req, "testset")
 		}
 	default:
 		{
@@ -35,24 +39,44 @@ func NewHandler() http.Handler {
 		log.Fatalf("error %q creating data dir %q", err, datadir)
 	}
 	return &handler{
-		datafile: datadir + "/uploaded_data",
-		log:      log,
+		datadir: datadir,
+		log:     log,
 	}
 }
 
-func (d *handler) upload(w http.ResponseWriter, req *http.Request) {
-	d.log.Printf("creating file %q", d.datafile)
-	file, err := os.Create(d.datafile)
+func (d *handler) failrequest(
+	w http.ResponseWriter,
+	req *http.Request,
+	fmt string,
+	args ...interface{},
+) {
+	d.log.Printf(fmt, args...)
+	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func (d *handler) upload(
+	w http.ResponseWriter,
+	req *http.Request,
+	filename string,
+) {
+	uploadedfile, _, err := req.FormFile(filename)
 	if err != nil {
-		d.log.Printf("error: %q opening file %q", err, d.datafile)
-		w.WriteHeader(http.StatusInternalServerError)
+		d.failrequest(w, req, "error: %q parsing form", err)
+		return
+	}
+	defer uploadedfile.Close()
+
+	filepath := d.datadir + "/" + filename
+	d.log.Printf("creating file %q", filepath)
+	file, err := os.Create(filepath)
+	if err != nil {
+		d.failrequest(w, req, "error: %q opening file %q", err, filepath)
 		return
 	}
 	d.log.Printf("created file with success, copying contents")
-	_, err = io.Copy(file, req.Body)
+	_, err = io.Copy(file, uploadedfile)
 	if err != nil {
-		d.log.Printf("error: %q copying file", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		d.failrequest(w, req, "error: %q copying file", err)
 		return
 	}
 	d.log.Printf("finished copying")
