@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 )
 
 type handler struct {
@@ -19,6 +20,7 @@ func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	case "/datahub/upload":
 		{
 			uploadFileNames := []string{
+				"code.r",
 				"trainingset.csv",
 				"testset.challenge.csv",
 				"testset.prediction.csv",
@@ -41,6 +43,10 @@ func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusOK)
+		}
+	case "/datahub/execr":
+		{
+			d.execR(w, req)
 		}
 	default:
 		{
@@ -70,6 +76,40 @@ func (d *handler) failrequest(
 ) {
 	d.log.Printf(fmt, args...)
 	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func (d *handler) execR(
+	w http.ResponseWriter,
+	req *http.Request,
+) {
+	// TODO: Still not getting stderr
+	cwd, err := os.Getwd()
+	if err != nil {
+		d.failrequest(w, "getwd: unexpected error %q", err)
+		return
+	}
+	err = os.Chdir(cwd + "/" + d.datadir)
+	if err != nil {
+		d.failrequest(w, "chdir: unexpected error %q", err)
+		return
+	}
+	defer os.Chdir(cwd)
+
+	cmd := exec.Command("R", "-f", "./code.r")
+	res, err := cmd.CombinedOutput()
+
+	if err != nil {
+		d.failrequest(w, "exec R: unexpected error %q", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(res)
+	if err != nil {
+		d.log.Printf("unexpected error %q sending response")
+		return
+	}
+	d.log.Printf("executed R code with success")
 }
 
 func (d *handler) receiveUpload(
