@@ -6,9 +6,9 @@
             "id": 5,
             "name": "Juliano Galga",
             "rating": 5,
-            "accuracy": 80.5,
-			"files": {
-    			"solution": "/files/job/7/scientists/5/result.csv",
+			"solution": {
+            	"accuracy": 80.5,
+    			"result": "/files/job/7/scientists/5/result.csv",
     			"code": "/files/job/7/scientists/5/code.r",
 				"description": "blah blah blah..."
 			}
@@ -17,9 +17,9 @@
             "id": 6,
             "name": "Caio Silva",
             "rating": 5,
-            "accuracy": 70.4,
-			"files": {
-    			"solution": "/files/job/7/scientists/6/result.csv",
+			"solution": {
+            	"accuracy": 70.4,
+    			"result": "/files/job/7/scientists/6/result.csv",
     			"code": "/files/job/7/scientists/6/code.r",
 				"description": "blah blah blah..."
 			}
