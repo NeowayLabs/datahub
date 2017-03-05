@@ -109,13 +109,13 @@ func (d *handler) receiveUpload(
 
 func (d *handler) scoreCheck(w http.ResponseWriter, req *http.Request) float32 {
 	const datadir string = "./.repo"
-	predictionfile, err := os.Open(datadir + "/testset.prediction")
+	predictionfile, err := os.Open(datadir + "/testset.prediction.csv")
 	if err != nil {
 		d.log.Printf("error: %q reading file", err)
 	}
 	defer predictionfile.Close()
 
-	resultfile, err := os.Open(datadir + "/testset.result")
+	resultfile, err := os.Open(datadir + "/testset.result.csv")
 	if err != nil {
 		d.log.Printf("error: %q reading file", err)
 	}
