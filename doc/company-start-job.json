@@ -1,0 +1,22 @@
+{
+    "jobId": 6,
+    "title": "blah blah blah",
+    "describe": "Homicide Report blah blah blah ....",
+    "startDate": "2017-03-03",
+    "endDate": "2017-06-03",
+    "scientists": [
+        {
+            "scientistId": 5,
+            "scientistName": "Juliano Galga",
+            "scientistStars": 5,
+            "proposedPrice": 15450.00
+        },
+        {
+            "scientistId": 6,
+            "scientistName": "Caio Silva",
+            "scientistStars": 5,
+            "proposedPrice": 18500.00
+        }
+    ]
+}
+
