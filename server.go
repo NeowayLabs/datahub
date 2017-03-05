@@ -15,13 +15,15 @@ type handler struct {
 func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// NOT VALIDATING THE HTTP METHODS :-)
 	switch req.URL.Path {
-	case "/datahub/upload/trainingset":
+	case "/datahub/upload":
 		{
-			d.upload(w, req, "trainingset")
-		}
-	case "/datahub/upload/testset":
-		{
-			d.upload(w, req, "testset")
+			trainingset := d.receiveUpload(req, "trainingset")
+			testset := d.receiveUpload(req, "testset")
+			if !trainingset && !testset {
+				d.failrequest(w, "unable to receive a testset or a trainingset")
+				return
+			}
+			w.WriteHeader(http.StatusOK)
 		}
 	default:
 		{
@@ -46,7 +48,6 @@ func NewHandler() http.Handler {
 
 func (d *handler) failrequest(
 	w http.ResponseWriter,
-	req *http.Request,
 	fmt string,
 	args ...interface{},
 ) {
@@ -54,15 +55,14 @@ func (d *handler) failrequest(
 	w.WriteHeader(http.StatusInternalServerError)
 }
 
-func (d *handler) upload(
-	w http.ResponseWriter,
+func (d *handler) receiveUpload(
 	req *http.Request,
 	filename string,
-) {
+) bool {
 	uploadedfile, _, err := req.FormFile(filename)
 	if err != nil {
-		d.failrequest(w, req, "error: %q parsing form", err)
-		return
+		d.log.Printf("%q parsing form", err)
+		return false
 	}
 	defer uploadedfile.Close()
 
@@ -70,15 +70,15 @@ func (d *handler) upload(
 	d.log.Printf("creating file %q", filepath)
 	file, err := os.Create(filepath)
 	if err != nil {
-		d.failrequest(w, req, "error: %q opening file %q", err, filepath)
-		return
+		d.log.Printf("error: %q opening file %q", err, filepath)
+		return false
 	}
 	d.log.Printf("created file with success, copying contents")
 	_, err = io.Copy(file, uploadedfile)
 	if err != nil {
-		d.failrequest(w, req, "error: %q copying file", err)
-		return
+		d.log.Printf("error: %q copying file", err)
+		return false
 	}
-	d.log.Printf("finished copying")
-	w.WriteHeader(http.StatusOK)
+	d.log.Printf("finished copying from form %q with success", filename)
+	return true
 }

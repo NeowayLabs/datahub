@@ -12,6 +12,6 @@ file=$3
 
 echo "uploading dataset: "$dataset" filepath: "$file" to : "$server
 
-curl -v  -F "$dataset=@$file" http://$server/datahub/upload/$dataset
+curl -v  -F "$dataset=@$file" http://$server/datahub/upload
 
 echo "done"
