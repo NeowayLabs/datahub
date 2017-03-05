@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 
 echo "run: "$0" <server> <dataset> <filepath>"
-echo "available datasets are: (trainingset, testset, testsetres)"
+echo "available datasets are: (trainingset, testset.challenge, testset.result, testset.prediction)"
 
 server=$1
 dataset=$2
