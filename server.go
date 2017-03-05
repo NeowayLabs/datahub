@@ -95,12 +95,14 @@ func (d *handler) execR(
 	defer os.Chdir(cwd)
 
 	cmd := exec.Command("R", "-f", "./code.r")
+	d.log.Printf("executing R code")
 	res, err := cmd.CombinedOutput()
 
 	if err != nil {
 		d.failrequest(w, "exec R: unexpected error %q", err)
 		return
 	}
+	d.log.Printf("executed R code with success")
 
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(res)
@@ -108,7 +110,6 @@ func (d *handler) execR(
 		d.log.Printf("unexpected error %q sending response")
 		return
 	}
-	d.log.Printf("executed R code with success")
 }
 
 func (d *handler) receiveUpload(
