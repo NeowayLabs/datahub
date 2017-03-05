@@ -13,15 +13,31 @@ type handler struct {
 }
 
 func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+
 	// NOT VALIDATING THE HTTP METHODS :-)
 	switch req.URL.Path {
 	case "/datahub/upload":
 		{
-			trainingset := d.receiveUpload(req, "trainingset")
-			testset := d.receiveUpload(req, "testset")
-			testsetres := d.receiveUpload(req, "testsetres")
-			if !trainingset && !testset && !testsetres {
-				d.failrequest(w, "no dataset received, expected one of these: testset, testsetres, trainingset")
+			uploadFileNames := []string{
+				"trainingset.csv",
+				"testset.challenge.csv",
+				"testset.prediction.csv",
+				"testset.result.csv",
+			}
+
+			success := false
+			for _, filename := range uploadFileNames {
+				res := d.receiveUpload(req, filename)
+				if res {
+					success = res
+				}
+			}
+			if !success {
+				d.failrequest(
+					w,
+					"no dataset received, expected one of these: %q",
+					uploadFileNames,
+				)
 				return
 			}
 			w.WriteHeader(http.StatusOK)
