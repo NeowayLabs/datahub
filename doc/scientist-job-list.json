@@ -1,0 +1,54 @@
+[
+	"new": [
+		{
+			"id": 20,
+			"company": "Neoway Business Solution",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		},
+		{
+			"id": 21,
+			"company": "Neoway Business Solution",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		},
+		{
+			"id": 22,
+			"company": "Facebook",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	],
+	"myJobs": [
+		{
+			"id": 12,
+			"company": "Netflix",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"accuracy": 70.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	],
+	"pending": [
+		{
+			"id": 12,
+			"company": "Twitter",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	]
+]

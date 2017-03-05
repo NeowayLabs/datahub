@@ -5,8 +5,8 @@ library(RColorBrewer)
 library(rpart)
 
 # The train and test data is stored in the ../input directory
-train <- read.csv("train.csv")
-test  <- read.csv("test.csv")
+train <- read.csv("trainingset.csv")
+test  <- read.csv("testset.challenge.csv")
 
 # We can inspect the train data. The results of this are printed in the log tab below
 summary(train)
@@ -30,14 +30,14 @@ my_solution <- data.frame(PassengerId = test$PassengerId, Survived = my_predicti
 nrow(my_solution)
  
 # Write your solution to a csv file with the name my_solution.csv
-write.csv(my_solution, file = "output_solution.csv", row.names = FALSE)
+write.csv(my_solution, file = "testset.prediction.csv", row.names = FALSE)
 # Here we will plot the passenger survival by class
 train$Survived <- factor(train$Survived, levels=c(1,0))
 levels(train$Survived) <- c("Survived", "Died")
 train$Pclass <- as.factor(train$Pclass)
 levels(train$Pclass) <- c("1st Class", "2nd Class", "3rd Class")
 
-png("output_image.png", width=800, height=600)
+png("testset.prediction.png", width=800, height=600)
 mosaicplot(train$Pclass ~ train$Survived, main="Passenger Survival by Class",
            color=c("#8dd3c7", "#fb8072"), shade=FALSE,  xlab="", ylab="",
            off=c(0), cex.axis=1.4)
