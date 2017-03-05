@@ -1,82 +1,81 @@
 {
-    "resume": {
-        "pending": 1,
-        "doing": 2,
-        "done": 5
-    },
-    "jobsPending": [
+    "pending": [
         {
             "jobId": 8,
             "title": "",
             "description": "Homicide Report blah blah blah ....",
-            "startDate": "2017-03-03",
+            "lastUpdate": "2017-03-03",
             "scientists": [
                 {
                     "id": 5,
                     "name": "Juliano Galga",
-                    "stars": 5
+                    "rating": 5
                 },
                 {
                     "id": 6,
                     "name": "Caio Silva",
-                    "stars": 5
+                    "rating": 5
                 }
             ],
             "status": "pending"
         }
     ],
-    "jobsDoing": [
+    "doing": [
         {
             "jobId": 6,
             "title": "",
             "description": "blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 4,
-            "name": "Amanda Rosa",
-            "stars": 3,
-            "accuracy": 50.5,
+            "scientist": {
+                "id": 4,
+                "name": "Amanda Rosa",
+                "rating": 3,
+                "accuracy": 50.5
+            },
             "status": "doing"
         },
         {
             "jobId": 7,
             "title": "",
             "description": "blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 4,
-            "name": "Amanda Rosa",
-            "stars": 3,
-            "accuracy": 50.5,
+            "scientist": {
+                "id": 4,
+                "name": "Amanda Rosa",
+                "rating": 3,
+                "accuracy": 50.5
+            },
             "status": "doing"
         }
     ],
-    "jobsDone": [
+    "done": [
         {
             "jobId": 1,
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 2,
-            "name": "Tiago Katcipis",
-            "stars": 5,
-            "accuracy": 80.5,
+            "scientist": {
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5,
+                "accuracy": 80.5
+            },
             "status": "done"
         },
         {
             "jobId": 2,
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 2,
-            "name": "Tiago Katcipis",
-            "stars": 5,
+            "scientist": {
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5
+            },
             "accuracy": 80.5,
             "status": "done"
         },
@@ -84,12 +83,13 @@
             "jobId": 3,
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 2,
-            "name": "Tiago Katcipis",
-            "stars": 5,
+            "scientist": {
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5
+            },
             "accuracy": 80.5,
             "status": "done"
         },
@@ -97,26 +97,28 @@
             "jobId": 4,
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 2,
-            "name": "Tiago Katcipis",
-            "stars": 5,
-            "accuracy": 80.5,
+            "scientist": {
+				"id": 2,
+            	"name": "Tiago Katcipis",
+            	"rating": 5,
+            	"accuracy": 80.5
+			},
             "status": "done"
         },
         {
             "jobId": 5,
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
-            "startDate": "2017-03-03",
-            "endDate": "2017-06-03",
+            "lastUpdate": "2017-03-03",
             "price": 15450.00,
-            "scientistId": 2,
-            "name": "Tiago Katcipis",
-            "stars": 5,
-            "accuracy": 80.5,
+            "scientist": {
+				"id": 2,
+            	"name": "Tiago Katcipis",
+            	"rating": 5,
+            	"accuracy": 80.5
+			},
             "status": "done"
         }
     ]
