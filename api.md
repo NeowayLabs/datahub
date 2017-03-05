@@ -6,63 +6,63 @@
 
 GET /companies/jobs
 
-response:
-200 OK
-
-	[
-		"new": [
-			{
-				"id": 20,
-				"company": "Neoway Business Solution",
-				"title": "blah blah blah blah",
-				"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-				"accuracyRequired": 90.5,
-				"deadline": "2017-03-20",
-				"proposedPrice": 15000.00
-			},
-			{
-				"id": 21,
-				"company": "Neoway Business Solution",
-				"title": "blah blah blah blah",
-				"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-				"accuracyRequired": 90.5,
-				"deadline": "2017-03-20",
-				"proposedPrice": 15000.00
-			},
-			{
-				"id": 22,
-				"company": "Facebook",
-				"title": "blah blah blah blah",
-				"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-				"accuracyRequired": 90.5,
-				"deadline": "2017-03-20",
-				"proposedPrice": 15000.00
-			}
-		],
-		"myJobs": [
-			{
-				"id": 12,
-				"company": "Netflix",
-				"title": "blah blah blah blah",
-				"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-				"accuracyRequired": 90.5,
-				"accuracy": 70.5,
-				"deadline": "2017-03-20",
-				"proposedPrice": 15000.00
-			}
-		],
-		"pending": [
-			{
-				"id": 12,
-				"company": "Twitter",
-				"title": "blah blah blah blah",
-				"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-				"accuracyRequired": 90.5,
-				"deadline": "2017-03-20",
-				"proposedPrice": 15000.00
-			}
-		]
+response: 200 OK
+```
+[
+	"new": [
+		{
+			"id": 20,
+			"company": "Neoway Business Solution",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		},
+		{
+			"id": 21,
+			"company": "Neoway Business Solution",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		},
+		{
+			"id": 22,
+			"company": "Facebook",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	],
+	"myJobs": [
+		{
+			"id": 12,
+			"company": "Netflix",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"accuracy": 70.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
+	],
+	"pending": [
+		{
+			"id": 12,
+			"company": "Twitter",
+			"title": "blah blah blah blah",
+			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+			"accuracyRequired": 90.5,
+			"deadline": "2017-03-20",
+			"proposedPrice": 15000.00
+		}
 	]
+]
+```
 
 ### Criar novo job
 POST /companies/jobs
@@ -76,8 +76,7 @@ POST /companies/jobs
 }
 ```
 
-response:
-200 Ok
+response: 200 OK
 ```
 {
     "id": <id>
@@ -89,8 +88,7 @@ Obs: job será criado com o status de "pending"
 ### Upload de arquivos do job
 POST /companies/job/_id_/upload
 
-response:
-200 OK
+response: 200 OK
 
 ### Pegar um job
 GET /jobs/_id_
@@ -212,13 +210,15 @@ PUT /jobs/_id_
 }
 ```
 
+response: 200 OK
+
 ## Scientist
 
 ### pegar lista de scientists
 GET /scientists
 
-response:
-200 OK
+response: 200 OK
+
 ```
 [
     {
