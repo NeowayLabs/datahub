@@ -43,11 +43,13 @@ func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusOK)
+			return
 		}
 	case "/datahub/score":
 		{
 			d.scoreCheck(w, req)
 			w.WriteHeader(http.StatusOK)
+			return
 		}
 	default:
 		{
@@ -108,14 +110,14 @@ func (d *handler) receiveUpload(
 }
 
 func (d *handler) scoreCheck(w http.ResponseWriter, req *http.Request) float32 {
-	const datadir string = "./.repo"
-	predictionfile, err := os.Open(datadir + "/testset.prediction.csv")
+
+	predictionfile, err := os.Open(d.datadir + "/testset.prediction.csv")
 	if err != nil {
 		d.log.Printf("error: %q reading file", err)
 	}
 	defer predictionfile.Close()
 
-	resultfile, err := os.Open(datadir + "/testset.result.csv")
+	resultfile, err := os.Open(d.datadir + "/testset.result.csv")
 	if err != nil {
 		d.log.Printf("error: %q reading file", err)
 	}
@@ -124,17 +126,24 @@ func (d *handler) scoreCheck(w http.ResponseWriter, req *http.Request) float32 {
 	scanpredictionfile := bufio.NewScanner(predictionfile)
 	scanresultfile := bufio.NewScanner(resultfile)
 
-	totallines := 0
-	ok := 0
+	totallines := float32(0)
+	ok := float32(0)
 	for scanresultfile.Scan() {
+		d.log.Printf("reading result line %q", scanresultfile.Text())
 		totallines = totallines + 1
 		if scanpredictionfile.Scan() {
+			d.log.Printf("reading prediction line %q", scanpredictionfile.Text())
 			if scanresultfile.Text() == scanpredictionfile.Text() {
 				ok++
+				d.log.Printf("line equal! %q", scanpredictionfile.Text())
+			} else {
+				d.log.Printf("line NOT equal! %q", scanpredictionfile.Text())
 			}
 		}
 	}
 	score := float32(int((ok*100/totallines)*100)) / 100
+	d.log.Printf("detected score: %f", score)
+
 	response := make(map[string]interface{})
 	response["score"] = score
 
