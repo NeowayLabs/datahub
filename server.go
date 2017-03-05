@@ -23,7 +23,6 @@ func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				"code.r",
 				"trainingset.csv",
 				"testset.challenge.csv",
-				"testset.prediction.csv",
 				"testset.result.csv",
 			}
 
