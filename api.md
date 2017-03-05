@@ -75,9 +75,11 @@ POST /companies/jobs
     "deadline": "2017-03-20",
     "proposedPrice": 15000.00
 }
+```
 
 response:
 200 Ok
+```
 {
     "id": <id>
 }
@@ -90,7 +92,7 @@ POST /companies/job/_id_/upload
 
 response:
 200 OK
-```
+
 ### Pegar um job
 GET /jobs/_id_
 ```
