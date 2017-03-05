@@ -1,0 +1,21 @@
+{
+    "id": 6,
+    "title": "blah blah blah",
+    "description": "Homicide Report blah blah blah ....",
+    "lastUpdate": "2017-03-03",
+    "scientists": [
+        {
+            "id": 5,
+            "name": "Juliano Galga",
+            "rating": 5,
+            "proposedPrice": 15450.00
+        },
+        {
+            "id": 6,
+            "name": "Caio Silva",
+            "rating": 5,
+            "proposedPrice": 18500.00
+        }
+    ]
+}
+

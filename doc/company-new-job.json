@@ -1,0 +1,13 @@
+{
+    "id": 20,
+    "title": "blah blah blah blah",
+    "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+    "accuracyRequired": 90.5,
+    "deadline": "2017-03-20",
+    "proposedPrice": 15000.00,
+    "files": {
+        "training": "/files/jobs/20/training.csv",
+        "test": "/files/jobs/20/test.csv",
+        "result": "/files/jobs/20/test.csv"
+    }
+}
