@@ -1,14 +1,13 @@
 # Data Hub API
 
-## Jobs
+## Companies - visão da empresa
 
 ### Pegar lista de jobs
 
-```
-GET /jobs
+GET /companies/jobs
 
-response:
-200 OK
+response: 200 OK
+```
 [
 	"new": [
 		{
@@ -66,30 +65,33 @@ response:
 ```
 
 ### Criar novo job
-POST /jobs
+POST /companies/jobs
 ```
 {
     "title": "blah blah blah blah",
     "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
     "accuracyRequired": 90.5,
     "deadline": "2017-03-20",
-    "proposedPrice": 15000.00,
-    "datasets": {
-        "training": "/files/jobs/20/training.csv",
-        "test": "/files/jobs/20/test.csv",
-        "result": "/files/jobs/20/test.csv"
-    }
+    "proposedPrice": 15000.00
 }
+```
 
-response:
-201 Created
+response: 200 OK
+```
 {
     "id": <id>
 }
 ```
 
+Obs: job será criado com o status de "pending"
+
+### Upload de arquivos do job
+POST /companies/job/_id_/upload
+
+response: 200 OK
+
 ### Pegar um job
-GET /jobs/<id>
+GET /jobs/_id_
 ```
 {
     "id": 6,
@@ -99,10 +101,11 @@ GET /jobs/<id>
     "accuracyRequired": 90.5,
     "deadline": "2017-03-20",
     "proposedPrice": 15000.00,
+	"status": "pending",
     "datasets": {
-        "training": "/files/jobs/20/training.csv",
-        "test": "/files/jobs/20/test.csv",
-        "result": "/files/jobs/20/test.csv"
+        "training": "/files/jobs/6/trainingset.csv",
+        "challenge": "/files/jobs/6/testset.challenge.csv",
+        "result": "/files/jobs/6/testset.result.csv"
     },
     "candidates": [
         {
@@ -126,8 +129,8 @@ GET /jobs/<id>
             "price": 15450.00
 			"solution": {
             	"accuracy": 80.5,
-    			"result": "/files/job/7/scientists/5/result.csv",
-    			"code": "/files/job/7/scientists/5/code.r",
+    			"result": "/files/job/6/scientists/5/result.csv",
+    			"code": "/files/job/6/scientists/5/code.r",
 				"description": "blah blah blah..."
 			}
         },
@@ -138,8 +141,8 @@ GET /jobs/<id>
             "rating": 5,
 			"solution": {
             	"accuracy": 70.4,
-    			"result": "/files/job/7/scientists/6/result.csv",
-    			"code": "/files/job/7/scientists/6/code.r",
+    			"result": "/files/job/6/scientists/6/result.csv",
+    			"code": "/files/job/6/scientists/6/code.r",
 				"description": "blah blah blah..."
 			}
         }
@@ -148,7 +151,7 @@ GET /jobs/<id>
 ```
 
 ### Alterar um job
-PUT /jobs/<id>
+PUT /jobs/_id_
 ```
 {
     "id": 6,
@@ -158,10 +161,11 @@ PUT /jobs/<id>
     "accuracyRequired": 90.5,
     "deadline": "2017-03-20",
     "proposedPrice": 15000.00,
+	"status": "doing",
     "datasets": {
-        "training": "/files/jobs/20/training.csv",
-        "test": "/files/jobs/20/test.csv",
-        "result": "/files/jobs/20/test.csv"
+        "training": "/files/jobs/6/trainingset.csv",
+        "challenge": "/files/jobs/6/testset.challenge.csv",
+        "result": "/files/jobs/6/testset.result.csv"
     },
     "candidates": [
         {
@@ -185,8 +189,8 @@ PUT /jobs/<id>
             "price": 15450.00
 			"solution": {
             	"accuracy": 80.5,
-    			"result": "/files/job/7/scientists/5/result.csv",
-    			"code": "/files/job/7/scientists/5/code.r",
+    			"result": "/files/job/6/scientists/5/result.csv",
+    			"code": "/files/job/6/scientists/5/code.r",
 				"description": "blah blah blah..."
 			}
         },
@@ -197,8 +201,8 @@ PUT /jobs/<id>
             "rating": 5,
 			"solution": {
             	"accuracy": 70.4,
-    			"result": "/files/job/7/scientists/6/result.csv",
-    			"code": "/files/job/7/scientists/6/code.r",
+    			"result": "/files/job/6/scientists/6/result.csv",
+    			"code": "/files/job/6/scientists/6/code.r",
 				"description": "blah blah blah..."
 			}
         }
@@ -206,13 +210,15 @@ PUT /jobs/<id>
 }
 ```
 
+response: 200 OK
+
 ## Scientist
 
 ### pegar lista de scientists
 GET /scientists
 
-response:
-200 OK
+response: 200 OK
+
 ```
 [
     {
