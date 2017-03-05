@@ -19,8 +19,9 @@ func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		{
 			trainingset := d.receiveUpload(req, "trainingset")
 			testset := d.receiveUpload(req, "testset")
-			if !trainingset && !testset {
-				d.failrequest(w, "unable to receive a testset or a trainingset")
+			testsetres := d.receiveUpload(req, "testsetres")
+			if !trainingset && !testset && !testsetres {
+				d.failrequest(w, "no dataset received, expected one of these: testset, testsetres, trainingset")
 				return
 			}
 			w.WriteHeader(http.StatusOK)
