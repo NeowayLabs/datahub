@@ -1,6 +1,8 @@
 package datahub
 
 import (
+	"bufio"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -24,6 +26,11 @@ func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				d.failrequest(w, "no dataset received, expected one of these: testset, testsetres, trainingset")
 				return
 			}
+			w.WriteHeader(http.StatusOK)
+		}
+	case "/datahub/score":
+		{
+			d.scoreCheck(w, req)
 			w.WriteHeader(http.StatusOK)
 		}
 	default:
@@ -82,4 +89,40 @@ func (d *handler) receiveUpload(
 	}
 	d.log.Printf("finished copying from form %q with success", filename)
 	return true
+}
+
+func (d *handler) scoreCheck(w http.ResponseWriter, req *http.Request) float32 {
+	const datadir string = "./.repo"
+	predictionfile, err := os.Open(datadir + "/testset.prediction")
+	if err != nil {
+		d.log.Printf("error: %q reading file", err)
+	}
+	defer predictionfile.Close()
+
+	resultfile, err := os.Open(datadir + "/testset.result")
+	if err != nil {
+		d.log.Printf("error: %q reading file", err)
+	}
+	defer resultfile.Close()
+
+	scanpredictionfile := bufio.NewScanner(predictionfile)
+	scanresultfile := bufio.NewScanner(resultfile)
+
+	totallines := 0
+	ok := 0
+	for scanresultfile.Scan() {
+		totallines = totallines + 1
+		if scanpredictionfile.Scan() {
+			if scanresultfile.Text() == scanpredictionfile.Text() {
+				ok++
+			}
+		}
+	}
+	score := float32(int((ok*100/totallines)*100)) / 100
+	response := make(map[string]interface{})
+	response["score"] = score
+
+	w.Header().Set("Content-type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	return score
 }
