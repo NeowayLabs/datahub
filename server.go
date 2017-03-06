@@ -392,10 +392,10 @@ func (d *Server) execR(
 		d.failrequest(w, "exec R: unexpected error %q", err)
 		return
 	}
-	d.log.Printf("executed R code with success")
+	d.log.Printf("executed R code with success, output: %q", output)
 
 	res, err := json.Marshal(map[string]interface{}{
-		"output":   output,
+		"output":   string(output),
 		"accuracy": 0.0,
 	})
 	if err != nil {
