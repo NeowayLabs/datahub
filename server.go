@@ -106,9 +106,17 @@ func (d *Server) companiesGetJobs(w http.ResponseWriter, req *http.Request, _ ht
 		}
 	}()
 
-	scientists := d.scientists.GetScientists()
+	pending := d.company.GetJobsByStatus("pending")
+	doing := d.company.GetJobsByStatus("doing")
+	done := d.company.GetJobsByStatus("done")
 
-	bytes, err := json.Marshal(scientists)
+	jobs := &Jobs{
+		Pending: pending,
+		Doing:   doing,
+		Done:    done,
+	}
+
+	bytes, err := json.Marshal(jobs)
 	if err != nil {
 		d.log.Printf("marshal: error %q", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -231,7 +239,20 @@ func (d *Server) scientistsList(w http.ResponseWriter, req *http.Request, _ http
 		}
 	}()
 
-	w.WriteHeader(http.StatusNotImplemented)
+	scientists := d.scientists.GetScientists()
+
+	bytes, err := json.Marshal(scientists)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (d *Server) scientistsGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
