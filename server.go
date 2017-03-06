@@ -57,7 +57,7 @@ func NewServer() *Server {
 	router.GET("/api/scientists/:id/jobs", d.scientistsGetJobs)
 	router.POST("/api/scientists/:id/jobs/:job/apply", d.scientistsApplyJob)
 	router.GET("/api/scientists/:id/jobs/:job/workspace", d.scientistsGetWorkspace)
-	router.POST("/api/scientists/:id/jobs/:job/upload", d.companiesUploadCode)
+	router.POST("/api/scientists/:id/jobs/:job/upload", d.scientistsUploadCode)
 
 	router.POST("/api/execR", d.execR)
 
@@ -341,7 +341,7 @@ func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, _ *http.Request, 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-func (d *Server) companiesUploadCode(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func (d *Server) scientistsUploadCode(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	//TODO
 	w.WriteHeader(http.StatusNotImplemented)
 }
