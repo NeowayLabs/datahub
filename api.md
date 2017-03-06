@@ -161,6 +161,12 @@ Obs: job será criado com o status de "pending"
 
 POST /api/companies/jobs/_ID_/upload
 
+Available files to upload are:
+
+* **trainingset.csv** : Training set (has the responses), sent by the company
+* **testset.challenge.csv** : Challenge test set (does not have the responses), sent by the company
+* **testset.result.csv** : Result test set, has all responses from the challenge, used to calculate accuracy
+
 response: 200 OK
 
 ### Obter dados de um job
@@ -409,33 +415,14 @@ GET /api/scientists/_ID_/jobs/_ID_/workspace
 
 POST /api/scientists/_ID_/jobs/_ID_/upload
 
+The form must have the following file:
 
-## Uploads
-
-Uploads are done using multipart forms just as the browser does.
-The name of the form field is the name of the file you are uploading.
-Multiple files can be uploaded simultaneously.
-
-Available files to upload are:
-
-* **trainingset.csv** : Training set (has the responses), sent by the company
-* **testset.challenge.csv** : Challenge test set (does not have the responses), sent by the company
-* **testset.result.csv** : Result test set, has all responses from the challenge, used to calculate accuracy
 * **code.r** : R code, sent by the statistician. Must be sent before executing code.
 
-The URI is:
-
-```
-/api/upload
-```
 
 ## Executing R code
 
-Just send a **POST** to the URI is:
-
-```
-/api/execr
-```
+POST /api/scientists/_ID_/jobs/_ID_/run
 
 Before this, all datasets should already been uploaded
 by the company and the R code should be uploaded by the
