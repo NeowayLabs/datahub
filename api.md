@@ -36,7 +36,7 @@ response: 200 OK
             "title": "",
             "description": "blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 4,
                 "name": "Amanda Rosa",
@@ -50,7 +50,7 @@ response: 200 OK
             "title": "",
             "description": "blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 4,
                 "name": "Amanda Rosa",
@@ -66,7 +66,7 @@ response: 200 OK
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 2,
                 "name": "Tiago Katcipis",
@@ -80,7 +80,7 @@ response: 200 OK
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 2,
                 "name": "Tiago Katcipis",
@@ -94,7 +94,7 @@ response: 200 OK
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 2,
                 "name": "Tiago Katcipis",
@@ -108,7 +108,7 @@ response: 200 OK
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 2,
                 "name": "Tiago Katcipis",
@@ -122,7 +122,7 @@ response: 200 OK
             "title": "Who Killed Who? Ex-Husband VS Ex-Wife",
             "description": "Homicide Report blah blah blah ....",
             "lastUpdate": "2017-03-03",
-            "price": 15450.00,
+            "proposed": 15450.00,
             "scientist": {
                 "id": 2,
                 "name": "Tiago Katcipis",
@@ -200,7 +200,7 @@ GET /api/companies/jobs/_ID_
             "id": 5,
             "name": "Juliano Galga",
             "rating": 5,
-            "price": 15450.00,
+            "counterproposal": 15450.00,
             "solution": {
                 "accuracy": 80.5,
                 "result": "/datasets/job/6/scientists/5/result.csv",
@@ -211,7 +211,7 @@ GET /api/companies/jobs/_ID_
         {
             "id": 6,
             "name": "Caio Silva",
-            "price": 18500.00,
+            "counterproposal": 18500.00,
             "rating": 5,
             "solution": {
                 "accuracy": 70.4,

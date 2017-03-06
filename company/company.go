@@ -6,24 +6,35 @@ import (
 	"io/ioutil"
 )
 
+// Workspace ...
+type Workspace struct {
+	Accuracy    int     `json:"accuracy"`
+	Result      string  `json:"result"`
+	Code        int     `json:"code"`
+	Description float64 `json:"Description"`
+}
+
 // Scientist ...
 type Scientist struct {
-	ID              int     `json:"id"`
-	Name            string  `json:"name"`
-	Rating          int     `json:"rating"`
-	Counterproposal float64 `json:"counterproposal,omitempty"`
+	ID              int       `json:"id"`
+	Name            string    `json:"name"`
+	Rating          int       `json:"rating"`
+	Counterproposal float64   `json:"counterproposal,omitempty"`
+	Workspace       Workspace `json:"workspace"`
 }
 
 // Job ...
 type Job struct {
-	ID          int          `json:"id"`
-	Title       string       `json:"title"`
-	Description string       `json:"description"`
-	Price       float64      `json:"price"`
-	Status      string       `json:"status"`
-	LastUpdate  string       `json:"lastUpdate"`
-	Candidates  []*Scientist `json:"candidates,omitempty"`
-	Scientists  []*Scientist `json:"scientists,omitempty"`
+	ID               int          `json:"id"`
+	Title            string       `json:"title"`
+	Description      string       `json:"description"`
+	Proposed         float64      `json:"proposed"`
+	AccuracyRequired float64      `json:"accuracyRequired"`
+	Deadline         string       `json:"deadline"`
+	Status           string       `json:"status"`
+	LastUpdate       string       `json:"lastUpdate"`
+	Candidates       []*Scientist `json:"candidates,omitempty"`
+	Scientists       []*Scientist `json:"scientists,omitempty"`
 }
 
 // Company ...
@@ -93,6 +104,7 @@ func (c *Company) StartJob(id int, scientists []*Scientist) error {
 	for _, scientist := range scientists {
 		for _, candidate := range job.Candidates {
 			if candidate.ID == scientist.ID {
+				//candidate.Workspace = Workspace{}
 				job.Scientists = append(job.Scientists, candidate)
 				break
 			}
