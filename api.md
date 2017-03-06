@@ -157,12 +157,12 @@ response: 200 OK
 Obs: job será criado com o status de "pending"
 
 ### Upload de arquivos do job
-POST /api/companies/job/_id_/upload
+POST /api/companies/jobs/_id_/upload
 
 response: 200 OK
 
 ### Recuperar um job
-GET /api/comapnies/jobs/_id_
+GET /api/companies/jobs/_id_
 ```json
 {
     "id": 6,
@@ -366,13 +366,15 @@ respoonse: 200 OK
 ]
 ```
 
-POST /api/scientists/_id_/apply
+POST /api/scientists/_id_/jobs/_id_/apply
+```json
 {
-    "jobId": 4
     "counterproposal": 20300.00    
 }
+```
 
 GET /api/scientists/_id_/jobs/_id_/workspace
+```json
 {
     "id": 6,
     "title": "blah blah blah blah",
@@ -393,6 +395,12 @@ GET /api/scientists/_id_/jobs/_id_/workspace
         "description": "blah blah blah..."
     }
 }
+```
+
+### Upload do codigo R de um scientists para um job
+
+POST /api/scientists/_id_/jobs/_id_/upload
+
 
 ## Uploads
 

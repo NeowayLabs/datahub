@@ -6,80 +6,130 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-type handler struct {
+// Server ...
+type Server struct {
+	router  *httprouter.Router
 	datadir string
 	log     *log.Logger
 }
 
-func (d *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-
-	// NOT VALIDATING THE HTTP METHODS :-)
-	switch req.URL.Path {
-	case "/datahub/upload":
-		{
-			uploadFileNames := []string{
-				"code.r",
-				"trainingset.csv",
-				"testset.challenge.csv",
-				"testset.result.csv",
-			}
-
-			success := false
-			for _, filename := range uploadFileNames {
-				res := d.receiveUpload(req, filename)
-				if res {
-					success = res
-				}
-			}
-			if !success {
-				d.failrequest(
-					w,
-					"no dataset received, expected one of these: %q",
-					uploadFileNames,
-				)
-				return
-			}
-			w.WriteHeader(http.StatusOK)
-		}
-	case "/datahub/execr":
-		{
-			d.execR(w, req)
-		}
-	default:
-		{
-			d.log.Printf("error: path %q not found", req.URL.Path)
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}
-}
-
-func NewHandler() http.Handler {
+// NewServer ...
+func NewServer() *Server {
 	const datadir string = "./.repo"
 	log := log.New(os.Stdout, "datahub.server", log.Lshortfile|log.Lmicroseconds)
 	err := os.MkdirAll(datadir, 0755)
 	if err != nil {
 		log.Fatalf("error %q creating data dir %q", err, datadir)
 	}
-	return &handler{
+
+	router := httprouter.New()
+
+	d := &Server{
+		router:  router,
 		datadir: datadir,
 		log:     log,
 	}
+
+	router.GET("/api/companies/jobs", d.companiesGetJobs)
+
+	router.POST("/api/companies/jobs", d.companiesCreateJob)
+	router.GET("/api/companies/jobs/:id", d.companiesGetJob)
+	router.POST("/api/companies/job/:id/upload", d.companiesUploadJob)
+	router.POST("/api/companies/jobs/:id/start", d.companiesStartJob)
+
+	router.GET("/api/scientists", d.scientistsList)
+
+	router.GET("/api/scientists/:id/jobs", d.scientistsGetJobs)
+	router.POST("/api/scientists/:id/jobs/:job/apply", d.scientistsApplyJob)
+	router.GET("/api/scientists/:id/jobs/:job/workspace", d.scientistsGetWorkspace)
+	router.POST("/api/scientists/:id/jobs/:job/upload", d.companiesUploadCode)
+
+	router.POST("/api/execR", d.execR)
+
+	return d
 }
 
-func (d *handler) failrequest(
-	w http.ResponseWriter,
-	fmt string,
-	args ...interface{},
-) {
-	d.log.Printf(fmt, args...)
-	w.WriteHeader(http.StatusInternalServerError)
+func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	uploadFileNames := []string{
+		"code.r",
+		"trainingset.csv",
+		"testset.challenge.csv",
+		"testset.result.csv",
+	}
+
+	jobID := params.ByName("id")
+
+	success := false
+	for _, filename := range uploadFileNames {
+		res := d.receiveUpload(req, filename, jobID)
+		if res {
+			success = res
+		}
+	}
+	if !success {
+		d.failrequest(
+			w,
+			"no dataset received, expected one of these: %q",
+			uploadFileNames,
+		)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
-func (d *handler) execR(
+func (d *Server) companiesGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) companiesCreateJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) companiesGetJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) companiesStartJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) scientistsList(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) scientistsGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) scientistsApplyJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) companiesUploadCode(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	//TODO
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+func (d *Server) execR(
 	w http.ResponseWriter,
 	req *http.Request,
+	_ httprouter.Params,
 ) {
 	// TODO: Still not getting stderr
 	cwd, err := os.Getwd()
@@ -92,7 +142,11 @@ func (d *handler) execR(
 		d.failrequest(w, "chdir: unexpected error %q", err)
 		return
 	}
-	defer os.Chdir(cwd)
+	defer func() {
+		if err := os.Chdir(cwd); err != nil {
+			d.log.Printf("chdir: unexpected error %q", err)
+		}
+	}()
 
 	cmd := exec.Command("R", "-f", "./code.r")
 	d.log.Printf("executing R code")
@@ -107,21 +161,27 @@ func (d *handler) execR(
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(res)
 	if err != nil {
-		d.log.Printf("unexpected error %q sending response")
+		d.log.Printf("unexpected error %q sending response", err)
 		return
 	}
 }
 
-func (d *handler) receiveUpload(
+func (d *Server) receiveUpload(
 	req *http.Request,
 	filename string,
+	jobID string,
 ) bool {
 	uploadedfile, _, err := req.FormFile(filename)
 	if err != nil {
 		d.log.Printf("%q parsing form", err)
 		return false
 	}
-	defer uploadedfile.Close()
+
+	defer func() {
+		if err := uploadedfile.Close(); err != nil {
+			d.log.Printf("close: unexpected error %q", err)
+		}
+	}()
 
 	filepath := d.datadir + "/" + filename
 	d.log.Printf("creating file %q", filepath)
@@ -138,4 +198,26 @@ func (d *handler) receiveUpload(
 	}
 	d.log.Printf("finished copying from form %q with success", filename)
 	return true
+}
+
+func (d *Server) failrequest(
+	w http.ResponseWriter,
+	fmt string,
+	args ...interface{},
+) {
+	d.log.Printf(fmt, args...)
+	w.WriteHeader(http.StatusInternalServerError)
+}
+
+// Handler ...
+func (d *Server) Handler() http.Handler {
+	return d.router
+}
+
+// ListenAndServe ...
+func (d *Server) ListenAndServe(addr string) {
+	d.log.Printf("WebServer running at %q...", addr)
+	if err := http.ListenAndServe(addr, d.router); err != nil {
+		d.log.Printf("error: %q running http server", err)
+	}
 }
