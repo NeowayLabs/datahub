@@ -2,20 +2,27 @@ package datahub
 
 import (
 	"bufio"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 
+	"github.com/NeowayLabs/datahub/company"
+	"github.com/NeowayLabs/datahub/scientists"
 	"github.com/julienschmidt/httprouter"
 )
 
 // Server ...
 type Server struct {
-	router  *httprouter.Router
-	datadir string
-	log     *log.Logger
+	router     *httprouter.Router
+	datadir    string
+	log        *log.Logger
+	company    *company.Company
+	scientists *scientists.Scientists
 }
 
 // NewServer ...
@@ -28,11 +35,15 @@ func NewServer() *Server {
 	}
 
 	router := httprouter.New()
+	company := company.NewCompany()
+	scientists := scientists.NewScientists()
 
 	d := &Server{
-		router:  router,
-		datadir: datadir,
-		log:     log,
+		router:     router,
+		datadir:    datadir,
+		log:        log,
+		company:    company,
+		scientists: scientists,
 	}
 
 	router.GET("/api/companies/jobs", d.companiesGetJobs)
@@ -82,48 +93,381 @@ func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, pa
 	w.WriteHeader(http.StatusOK)
 }
 
-func (d *Server) companiesGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+// Jobs ...
+type Jobs struct {
+	New     []*company.Job `json:"new,omitempty"`
+	Pending []*company.Job `json:"pending"`
+	Doing   []*company.Job `json:"doing"`
+	Done    []*company.Job `json:"done"`
 }
 
-func (d *Server) companiesCreateJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) companiesGetJobs(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	pending := d.company.GetJobsByStatus("pending")
+	doing := d.company.GetJobsByStatus("doing")
+	done := d.company.GetJobsByStatus("done")
+
+	jobs := &Jobs{
+		Pending: pending,
+		Doing:   doing,
+		Done:    done,
+	}
+
+	bytes, err := json.Marshal(jobs)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
-func (d *Server) companiesGetJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) companiesCreateJob(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	decoder := json.NewDecoder(req.Body)
+
+	var job company.Job
+	if err := decoder.Decode(&job); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	d.company.AddNewJob(&job)
+
+	w.WriteHeader(http.StatusOK)
 }
 
-func (d *Server) companiesStartJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func getID(params httprouter.Params, name string) (int, error) {
+	s := params.ByName(name)
+	if s == "" {
+		return 0, fmt.Errorf("param: id is empty")
+	}
+
+	id, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, fmt.Errorf("param: id is not a number")
+	}
+
+	return id, nil
 }
 
-func (d *Server) scientistsList(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) companiesGetJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	id, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	job := d.company.GetJob(id)
+	if job == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	bytes, err := json.Marshal(job)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
-func (d *Server) scientistsGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) companiesStartJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	type Scientists struct {
+		Scientists []*company.Scientist `json:"scientists"`
+	}
+
+	job, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	decoder := json.NewDecoder(req.Body)
+
+	var scientists Scientists
+	if err := decoder.Decode(&scientists); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := d.company.StartJob(job, scientists.Scientists); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
-func (d *Server) scientistsApplyJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) scientistsList(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	scientists := d.scientists.GetScientists()
+
+	bytes, err := json.Marshal(scientists)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
-func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) scientistsGetJobs(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	id, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	pendingJobs := d.company.GetJobsByStatus("pending")
+	doingJobs := d.company.GetJobsByStatus("doing")
+	doneJobs := d.company.GetJobsByStatus("done")
+
+	new := make([]*company.Job, 0, len(pendingJobs))
+	pending := make([]*company.Job, 0, len(pendingJobs))
+	doing := make([]*company.Job, 0, len(doingJobs))
+	done := make([]*company.Job, 0, len(doneJobs))
+
+jobs:
+	for _, job := range pendingJobs {
+		candidates := job.Candidates
+		for _, candidate := range candidates {
+			if candidate.ID == id {
+				pending = append(pending, job)
+				continue jobs
+			}
+		}
+		new = append(new, job)
+	}
+
+	for _, job := range doingJobs {
+		scientists := job.Scientists
+		for _, scientist := range scientists {
+			if scientist.ID == id {
+				doing = append(doing, job)
+				break
+			}
+		}
+	}
+
+	for _, job := range doneJobs {
+		scientists := job.Scientists
+		for _, scientist := range scientists {
+			if scientist.ID == id {
+				done = append(done, job)
+				break
+			}
+		}
+	}
+
+	jobs := &Jobs{
+		New:     new,
+		Pending: pending,
+		Doing:   doing,
+		Done:    done,
+	}
+
+	bytes, err := json.Marshal(jobs)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+// Apply ...
+type Apply struct {
+	Counterproposal float64 `json:"counterproposal"`
+}
+
+func (d *Server) scientistsApplyJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	id, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	scientist := d.scientists.GetScientist(id)
+
+	job, err := getID(params, "job")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	decoder := json.NewDecoder(req.Body)
+
+	var apply Apply
+	if err := decoder.Decode(&apply); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	candidate := &company.Scientist{
+		ID:              scientist.ID,
+		Name:            scientist.Name,
+		Rating:          scientist.Rating,
+		Counterproposal: apply.Counterproposal,
+	}
+
+	if err := d.company.ApplyScientist(job, candidate); err != nil {
+		d.log.Printf("apply: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	// Workspace ...
+	type Workspace struct {
+		ID               int               `json:"id"`
+		Title            string            `json:"title"`
+		Description      string            `json:"description"`
+		Proposed         float64           `json:"proposed"`
+		AccuracyRequired float64           `json:"accuracyRequired"`
+		Deadline         string            `json:"deadline"`
+		Status           string            `json:"status"`
+		LastUpdate       string            `json:"lastUpdate"`
+		Workspace        company.Workspace `json:"workspace"`
+	}
+
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	scientistID, err := getID(params, "id")
+	if err != nil {
+		d.log.Printf("params: %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	jobID, err := getID(params, "job")
+	if err != nil {
+		d.log.Printf("params: %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	job := d.company.GetJob(jobID)
+	if job == nil {
+		d.log.Printf("job %d not found", jobID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	var scientist *company.Scientist
+
+	for _, sc := range job.Scientists {
+		if sc.ID == scientistID {
+			scientist = sc
+			break
+		}
+	}
+
+	if scientist == nil {
+		d.log.Printf("scientist %d not found", scientistID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	workspace := &Workspace{
+		ID:               job.ID,
+		Title:            job.Title,
+		Description:      job.Description,
+		Proposed:         job.Proposed,
+		AccuracyRequired: job.AccuracyRequired,
+		Deadline:         job.Deadline,
+		Status:           job.Status,
+		LastUpdate:       job.LastUpdate,
+		Workspace:        scientist.Workspace,
+	}
+
+	bytes, err := json.Marshal(workspace)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (d *Server) companiesUploadCode(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
+	//TODO executar o codigo em R e atualizar os campos do workspace do scientist: accuracy, result, code
+
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -220,8 +564,8 @@ func (d *Server) scorecheck(predictionfilepath string, resultfilepath string) (f
 	scanpredictionfile := bufio.NewScanner(predictionfile)
 	scanresultfile := bufio.NewScanner(resultfile)
 
-	totallines := float32(0)
-	ok := float32(0)
+	var ok, totallines float32
+
 	for scanresultfile.Scan() {
 		d.log.Printf("reading result line %q", scanresultfile.Text())
 		totallines = totallines + 1
