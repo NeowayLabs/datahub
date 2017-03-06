@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"sync"
 )
 
 // Workspace ...
@@ -39,13 +40,19 @@ type Job struct {
 
 // Company ...
 type Company struct {
-	jobs []*Job
+	mutex *sync.RWMutex
+	jobs  []*Job
 }
 
 // NewCompany ...
 func NewCompany() *Company {
 	jobs := loadJobs()
-	return &Company{jobs: jobs}
+	mutex := &sync.RWMutex{}
+
+	return &Company{
+		jobs:  jobs,
+		mutex: mutex,
+	}
 }
 
 func loadJobs() []*Job {
@@ -63,6 +70,9 @@ func loadJobs() []*Job {
 
 // GetJobsByStatus ...
 func (c *Company) GetJobsByStatus(status string) []*Job {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
 	jobs := make([]*Job, 0, len(c.jobs))
 
 	for _, job := range c.jobs {
@@ -76,6 +86,9 @@ func (c *Company) GetJobsByStatus(status string) []*Job {
 
 // AddNewJob ...
 func (c *Company) AddNewJob(job *Job) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	job.ID = len(c.jobs)
 	job.Status = "pending"
 
@@ -84,6 +97,9 @@ func (c *Company) AddNewJob(job *Job) {
 
 // GetJob ...
 func (c *Company) GetJob(id int) *Job {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
 	if id >= len(c.jobs) {
 		return nil
 	}
@@ -93,6 +109,9 @@ func (c *Company) GetJob(id int) *Job {
 
 // StartJob ...
 func (c *Company) StartJob(id int, scientists []*Scientist) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	if id >= len(c.jobs) {
 		return fmt.Errorf("Job %d not found", id)
 	}
@@ -119,6 +138,9 @@ func (c *Company) StartJob(id int, scientists []*Scientist) error {
 
 // ApplyScientist ...
 func (c *Company) ApplyScientist(id int, candidate *Scientist) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	if id >= len(c.jobs) {
 		return fmt.Errorf("Job %d not found", id)
 	}
