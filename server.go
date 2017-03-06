@@ -15,6 +15,7 @@ type Server struct {
 	router  *httprouter.Router
 	datadir string
 	log     *log.Logger
+	company *Company
 }
 
 // NewServer ...
@@ -27,11 +28,13 @@ func NewServer() *Server {
 	}
 
 	router := httprouter.New()
+	company := NewCompany()
 
 	d := &Server{
 		router:  router,
 		datadir: datadir,
 		log:     log,
+		company: company,
 	}
 
 	router.GET("/api/companies/jobs", d.companiesGetJobs)
