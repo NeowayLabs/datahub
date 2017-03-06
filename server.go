@@ -1,12 +1,14 @@
 package datahub
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 
+	"github.com/NeowayLabs/datahub/company"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -15,7 +17,7 @@ type Server struct {
 	router  *httprouter.Router
 	datadir string
 	log     *log.Logger
-	company *Company
+	company *company.Company
 }
 
 // NewServer ...
@@ -28,7 +30,7 @@ func NewServer() *Server {
 	}
 
 	router := httprouter.New()
-	company := NewCompany()
+	company := company.NewCompany()
 
 	d := &Server{
 		router:  router,
@@ -84,9 +86,36 @@ func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, pa
 	w.WriteHeader(http.StatusOK)
 }
 
+// Jobs ...
+type Jobs struct {
+	Pending []company.Job `json:"pending"`
+	Doing   []company.Job `json:"doing"`
+	Done    []company.Job `json:"done"`
+}
+
 func (d *Server) companiesGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+	pending := d.company.GetJobsByStatus("pending")
+	doing := d.company.GetJobsByStatus("doing")
+	done := d.company.GetJobsByStatus("done")
+
+	jobs := &Jobs{
+		Pending: pending,
+		Doing:   doing,
+		Done:    done,
+	}
+
+	bytes, err := json.Marshal(jobs)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (d *Server) companiesCreateJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
