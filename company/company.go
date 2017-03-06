@@ -68,6 +68,18 @@ func loadJobs() []*Job {
 	return jobs
 }
 
+func saveJobs(jobs []*Job) {
+	buffer, err := json.Marshal(jobs)
+	if err != nil {
+		return
+	}
+
+	err = ioutil.WriteFile("./db/company/jobs.json", buffer, 0644)
+	if err != nil {
+		return
+	}
+}
+
 // GetJobsByStatus ...
 func (c *Company) GetJobsByStatus(status string) []*Job {
 	c.mutex.RLock()
@@ -93,6 +105,8 @@ func (c *Company) AddNewJob(job *Job) {
 	job.Status = "pending"
 
 	c.jobs = append(c.jobs, job)
+
+	saveJobs(c.jobs)
 }
 
 // GetJob ...
@@ -133,6 +147,7 @@ func (c *Company) StartJob(id int, scientists []*Scientist) error {
 	job.Candidates = nil
 	job.Status = "doing"
 
+	saveJobs(c.jobs)
 	return nil
 }
 
@@ -147,5 +162,7 @@ func (c *Company) ApplyScientist(id int, candidate *Scientist) error {
 
 	job := c.jobs[id]
 	job.Candidates = append(job.Candidates, candidate)
+
+	saveJobs(c.jobs)
 	return nil
 }
