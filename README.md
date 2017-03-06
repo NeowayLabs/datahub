@@ -45,7 +45,8 @@ R -f ./code.r
 
 Example:
 ```
-curl -XPOST http://192.168.10.169:8080/api/companies/jobs -d '{"title": "teste1", "description":"blah blah", "deadline": "2017-04-01", "proposed": 5000, "accuracyRequired": 90.5}'
+curl -XPOST http://192.168.10.169:8080/api/companies/jobs -d '{"title": "Faturamento Presumido de Empresas do Brasil", "description":"Calcular para a Neoway o faturamento presumido de todas as empresas do Brasil baseado no CNAE", "deadline": "2017-04-01", "proposed": 5000, "accuracyRequired": 90.5}'
+
 curl http://192.168.10.169:8080/api/companies/jobs|json_pp
 
 curl -XPOST http://192.168.10.169:8080/api/scientists/4/jobs/5/apply -d '{"counterproposal": 1000}'
