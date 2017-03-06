@@ -13,6 +13,6 @@ file=$4
 
 echo "uploading job: "$job" dataset: "$dataset" filepath: "$file" to : "$server
 
-curl -v  -X POST -F "$dataset=@$file" "http://$server/api/companies/jobs/$job/upload"
+curl -v -F "$dataset=@$file" "http://$server/api/companies/jobs/$job/upload"
 
 echo "done"

@@ -51,7 +51,7 @@ func NewServer() *Server {
 
 	router.POST("/api/companies/jobs", d.companiesCreateJob)
 	router.GET("/api/companies/jobs/:id", d.companiesGetJob)
-	router.POST("/api/companies/job/:id/upload", d.companiesUploadJob)
+	router.POST("/api/companies/jobs/:id/upload", d.companiesUploadJob)
 	router.POST("/api/companies/jobs/:id/start", d.companiesStartJob)
 
 	router.GET("/api/scientists", d.scientistsList)
