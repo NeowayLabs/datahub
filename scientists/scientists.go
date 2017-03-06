@@ -42,3 +42,12 @@ func loadScientists() []*Scientist {
 func (s *Scientists) GetScientists() []*Scientist {
 	return s.scientists
 }
+
+// GetScientist ...
+func (s *Scientists) GetScientist(id int) *Scientist {
+	if id >= len(s.scientists) {
+		return nil
+	}
+
+	return s.scientists[id]
+}

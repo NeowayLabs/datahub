@@ -11,5 +11,8 @@ run: build
 image:
 	docker build . -t neowaylabs/datahub
 
+shell: image
+	docker run -ti neowaylabs/datahub /bin/bash
+
 publish: image
 	docker push neowaylabs/datahub:$(version)

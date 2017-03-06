@@ -26,7 +26,7 @@ type Server struct {
 
 // NewServer ...
 func NewServer() *Server {
-	const datadir string = "./.repo"
+	const datadir string = "./.datasets"
 	log := log.New(os.Stdout, "datahub.server", log.Lshortfile|log.Lmicroseconds)
 	err := os.MkdirAll(datadir, 0755)
 	if err != nil {
@@ -66,7 +66,6 @@ func NewServer() *Server {
 
 func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
 	uploadFileNames := []string{
-		"code.r",
 		"trainingset.csv",
 		"testset.challenge.csv",
 		"testset.result.csv",
@@ -403,7 +402,14 @@ func (d *Server) receiveUpload(
 		}
 	}()
 
-	filepath := d.datadir + "/" + filename
+	jobdir := d.datadir + "/" + jobID
+	err := os.MkdirAll(jobdir, 0755)
+	if err != nil {
+		d.log.Printf("error %q creating data dir %q", err, datadir)
+		return false
+	}
+
+	filepath := jobdir + "/" + filename
 	d.log.Printf("creating file %q", filepath)
 	file, err := os.Create(filepath)
 	if err != nil {
