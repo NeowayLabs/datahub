@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 
 	"github.com/NeowayLabs/datahub/company"
 	"github.com/NeowayLabs/datahub/scientists"
@@ -363,13 +364,16 @@ func (d *Server) execR(
 	req *http.Request,
 	params httprouter.Params,
 ) {
-	//jobID := params.ByName("job")
 	cwd, err := os.Getwd()
 	if err != nil {
 		d.failrequest(w, "getwd: unexpected error %q", err)
 		return
 	}
-	err = os.Chdir(cwd + "/" + d.datadir)
+
+	jobID := params.ByName("job")
+	jobdir := strings.Join([]string{cwd, d.datadir, jobID}, "/")
+	d.log.Printf("changing to dir %q", jobdir)
+	err = os.Chdir(jobdir)
 	if err != nil {
 		d.failrequest(w, "chdir: unexpected error %q", err)
 		return
@@ -382,13 +386,22 @@ func (d *Server) execR(
 
 	cmd := exec.Command("R", "-f", "./code.r")
 	d.log.Printf("executing R code")
-	res, err := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 
 	if err != nil {
 		d.failrequest(w, "exec R: unexpected error %q", err)
 		return
 	}
 	d.log.Printf("executed R code with success")
+
+	res, err := json.Marshal(map[string]interface{}{
+		"output":   output,
+		"accuracy": 0.0,
+	})
+	if err != nil {
+		d.failrequest(w, "error %q marshalling response", err)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(res)
