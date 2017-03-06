@@ -2,7 +2,7 @@
 
 ## Companies - visão da empresa
 
-### Pegar lista de jobs
+### Lista de jobs
 
 GET /api/companies/jobs
 
@@ -135,7 +135,8 @@ response: 200 OK
 }
 ```
 
-### Criar novo job
+### Criar um novo job
+
 POST /api/companies/jobs
 ```json
 {
@@ -150,18 +151,20 @@ POST /api/companies/jobs
 response: 200 OK
 ```json
 {
-    "id": <id>
+    "id": 1
 }
 ```
 
 Obs: job será criado com o status de "pending"
 
 ### Upload de arquivos do job
+
 POST /api/companies/jobs/_id_/upload
 
 response: 200 OK
 
-### Recuperar um job
+### Obter dados de um job
+
 GET /api/companies/jobs/_id_
 ```json
 {
@@ -197,7 +200,7 @@ GET /api/companies/jobs/_id_
             "id": 5,
             "name": "Juliano Galga",
             "rating": 5,
-            "price": 15450.00
+            "price": 15450.00,
             "solution": {
                 "accuracy": 80.5,
                 "result": "/datasets/job/6/scientists/5/result.csv",
@@ -208,7 +211,7 @@ GET /api/companies/jobs/_id_
         {
             "id": 6,
             "name": "Caio Silva",
-            "price": 18500.00
+            "price": 18500.00,
             "rating": 5,
             "solution": {
                 "accuracy": 70.4,
@@ -222,6 +225,7 @@ GET /api/companies/jobs/_id_
 ```
 
 ### Iniciar um job
+
 POST /api/companies/jobs/_id_/start
 ```json
 {
@@ -240,11 +244,11 @@ response: 200 OK
 
 ## Scientist
 
-### pegar lista de scientists
+### Lista de scientists
+
 GET /api/scientists
 
 response: 200 OK
-
 ```json
 [
     {
@@ -292,13 +296,13 @@ response: 200 OK
 ]
 ```
 
-### Pegar lista de jobs do scientists
+### Lista de jobs do scientists
+
 GET /api/scientists/_id_/jobs
 
 respoonse: 200 OK
-
 ```json
-[
+{
     "new": [
         {
             "id": 20,
@@ -363,15 +367,19 @@ respoonse: 200 OK
             "proposed": 15000.00
         }
     ]
-]
+}
 ```
+
+### Aceitar um job
 
 POST /api/scientists/_id_/jobs/_id_/apply
 ```json
 {
-    "counterproposal": 20300.00    
+    "counterproposal": 20300.00
 }
 ```
+
+### Vizualizar área de trabalho de um job
 
 GET /api/scientists/_id_/jobs/_id_/workspace
 ```json
@@ -418,7 +426,7 @@ Available files to upload are:
 The URI is:
 
 ```
-/datahub/upload
+/api/upload
 ```
 
 ## Executing R code
@@ -426,7 +434,7 @@ The URI is:
 Just send a **POST** to the URI is:
 
 ```
-/datahub/execr
+/api/execr
 ```
 
 Before this, all datasets should already been uploaded
