@@ -59,3 +59,12 @@ func (c *Company) AddNewJob(job Job) {
 
 	c.jobs = append(c.jobs, job)
 }
+
+// GetJob ...
+func (c *Company) GetJob(id int) *Job {
+	if id >= len(c.jobs) {
+		return nil
+	}
+
+	return &c.jobs[id]
+}

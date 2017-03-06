@@ -1,6 +1,6 @@
 [
 	{
-		"jobId": 1,
+		"id": 0,
 		"title": "Who Killed Who? Ex-Husband VS Ex-Wife",
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
@@ -14,7 +14,7 @@
 		"status": "done"
 	},
 	{
-		"jobId": 2,
+		"id": 1,
 		"title": "Who Killed Who? Ex-Husband VS Ex-Wife",
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
@@ -28,7 +28,7 @@
 		"status": "done"
 	},
 	{
-		"jobId": 3,
+		"id": 2,
 		"title": "Who Killed Who? Ex-Husband VS Ex-Wife",
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
@@ -42,7 +42,7 @@
 		"status": "done"
 	},
 	{
-		"jobId": 4,
+		"id": 3,
 		"title": "Who Killed Who? Ex-Husband VS Ex-Wife",
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
@@ -56,7 +56,7 @@
 		"status": "done"
 	},
 	{
-		"jobId": 5,
+		"id": 4,
 		"title": "Who Killed Who? Ex-Husband VS Ex-Wife",
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
