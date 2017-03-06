@@ -1,6 +1,7 @@
 package datahub
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -424,6 +425,46 @@ func (d *Server) receiveUpload(
 	}
 	d.log.Printf("finished copying from form %q with success", filename)
 	return true
+}
+
+func (d *Server) scorecheck(predictionfilepath string, resultfilepath string) (float32, error) {
+
+	predictionfile, err := os.Open(predictionfilepath)
+	if err != nil {
+		d.log.Printf("error: %q reading file", err)
+		return 0, err
+	}
+	defer predictionfile.Close()
+
+	resultfile, err := os.Open(resultfilepath)
+	if err != nil {
+		d.log.Printf("error: %q reading file", err)
+		return 0, err
+	}
+	defer resultfile.Close()
+
+	scanpredictionfile := bufio.NewScanner(predictionfile)
+	scanresultfile := bufio.NewScanner(resultfile)
+
+	var ok, totallines float32
+
+	for scanresultfile.Scan() {
+		d.log.Printf("reading result line %q", scanresultfile.Text())
+		totallines = totallines + 1
+		if scanpredictionfile.Scan() {
+			d.log.Printf("reading prediction line %q", scanpredictionfile.Text())
+			if scanresultfile.Text() == scanpredictionfile.Text() {
+				ok++
+				d.log.Printf("line equal! %q", scanpredictionfile.Text())
+			} else {
+				d.log.Printf("line NOT equal! %q", scanpredictionfile.Text())
+			}
+		}
+	}
+	score := ok * 100 / totallines
+	d.log.Printf("detected score: %f", score)
+
+	return score, nil
 }
 
 func (d *Server) failrequest(
