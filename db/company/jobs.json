@@ -5,12 +5,14 @@
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
 		"price": 15450.00,
-		"scientist": {
-			"id": 2,
-			"name": "Tiago Katcipis",
-			"rating": 5,
-			"accuracy": 80.5
-		},
+		"scientists": [
+			{
+				"id": 2,
+				"name": "Tiago Katcipis",
+				"rating": 5,
+				"accuracy": 80.5
+			}
+		],
 		"status": "done"
 	},
 	{
@@ -19,11 +21,13 @@
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
 		"price": 15450.00,
-		"scientist": {
-			"id": 2,
-			"name": "Tiago Katcipis",
-			"rating": 5
-		},
+		"scientists": [
+			{
+				"id": 2,
+				"name": "Tiago Katcipis",
+				"rating": 5
+			}
+		],
 		"accuracy": 80.5,
 		"status": "done"
 	},
@@ -33,11 +37,13 @@
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
 		"price": 15450.00,
-		"scientist": {
-			"id": 2,
-			"name": "Tiago Katcipis",
-			"rating": 5
-		},
+		"scientists": [
+			{
+				"id": 2,
+				"name": "Tiago Katcipis",
+				"rating": 5
+			}
+		],
 		"accuracy": 80.5,
 		"status": "done"
 	},
@@ -47,12 +53,14 @@
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
 		"price": 15450.00,
-		"scientist": {
-			"id": 2,
-			"name": "Tiago Katcipis",
-			"rating": 5,
-			"accuracy": 80.5
-		},
+		"scientists": [
+			{
+				"id": 2,
+				"name": "Tiago Katcipis",
+				"rating": 5,
+				"accuracy": 80.5
+			}
+		],
 		"status": "done"
 	},
 	{
@@ -61,12 +69,14 @@
 		"description": "Homicide Report blah blah blah ....",
 		"lastUpdate": "2017-03-03",
 		"price": 15450.00,
-		"scientist": {
-			"id": 2,
-			"name": "Tiago Katcipis",
-			"rating": 5,
-			"accuracy": 80.5
-		},
+		"scientists": [
+			{
+				"id": 2,
+				"name": "Tiago Katcipis",
+				"rating": 5,
+				"accuracy": 80.5
+			}
+		],
 		"status": "done"
 	}
 ]

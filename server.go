@@ -94,6 +94,7 @@ func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, pa
 
 // Jobs ...
 type Jobs struct {
+	New     []*company.Job `json:"new,omitempty"`
 	Pending []*company.Job `json:"pending"`
 	Doing   []*company.Job `json:"doing"`
 	Done    []*company.Job `json:"done"`
@@ -151,8 +152,8 @@ func (d *Server) companiesCreateJob(w http.ResponseWriter, req *http.Request, _ 
 	w.WriteHeader(http.StatusOK)
 }
 
-func getID(params httprouter.Params) (int, error) {
-	s := params.ByName("id")
+func getID(params httprouter.Params, name string) (int, error) {
+	s := params.ByName(name)
 	if s == "" {
 		return 0, fmt.Errorf("param: id is empty")
 	}
@@ -172,7 +173,7 @@ func (d *Server) companiesGetJob(w http.ResponseWriter, req *http.Request, param
 		}
 	}()
 
-	id, err := getID(params)
+	id, err := getID(params, "id")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -209,7 +210,7 @@ func (d *Server) companiesStartJob(w http.ResponseWriter, req *http.Request, par
 		Scientists []*company.Scientist `json:"scientists"`
 	}
 
-	job, err := getID(params)
+	job, err := getID(params, "id")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -255,9 +256,79 @@ func (d *Server) scientistsList(w http.ResponseWriter, req *http.Request, _ http
 	}
 }
 
-func (d *Server) scientistsGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) scientistsGetJobs(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	id, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	pendingJobs := d.company.GetJobsByStatus("pending")
+	doingJobs := d.company.GetJobsByStatus("doing")
+	doneJobs := d.company.GetJobsByStatus("done")
+
+	new := make([]*company.Job, 0, len(pendingJobs))
+	pending := make([]*company.Job, 0, len(pendingJobs))
+	doing := make([]*company.Job, 0, len(doingJobs))
+	done := make([]*company.Job, 0, len(doneJobs))
+
+jobs:
+	for _, job := range pendingJobs {
+		candidates := job.Candidates
+		for _, candidate := range candidates {
+			if candidate.ID == id {
+				pending = append(pending, job)
+				continue jobs
+			}
+		}
+		new = append(new, job)
+	}
+
+	for _, job := range doingJobs {
+		scientists := job.Scientists
+		for _, scientist := range scientists {
+			if scientist.ID == id {
+				doing = append(doing, job)
+				break
+			}
+		}
+	}
+
+	for _, job := range doneJobs {
+		scientists := job.Scientists
+		for _, scientist := range scientists {
+			if scientist.ID == id {
+				done = append(done, job)
+				break
+			}
+		}
+	}
+
+	jobs := &Jobs{
+		New:     new,
+		Pending: pending,
+		Doing:   doing,
+		Done:    done,
+	}
+
+	bytes, err := json.Marshal(jobs)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (d *Server) scientistsApplyJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {

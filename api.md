@@ -300,7 +300,7 @@ response: 200 OK
 
 GET /api/scientists/_ID_/jobs
 
-respoonse: 200 OK
+response: 200 OK
 ```json
 {
     "new": [

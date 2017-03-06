@@ -21,8 +21,8 @@ type Job struct {
 	Price       float64      `json:"price"`
 	Status      string       `json:"status"`
 	LastUpdate  string       `json:"lastUpdate"`
-	Candidates  []*Scientist `json:"candidates"`
-	Scientists  []*Scientist `json:"scientists"`
+	Candidates  []*Scientist `json:"candidates,omitempty"`
+	Scientists  []*Scientist `json:"scientists,omitempty"`
 }
 
 // Company ...
