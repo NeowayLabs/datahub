@@ -331,9 +331,55 @@ jobs:
 	}
 }
 
-func (d *Server) scientistsApplyJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+// Apply ...
+type Apply struct {
+	Counterproposal float64 `json:"counterproposal"`
+}
+
+func (d *Server) scientistsApplyJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	id, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	scientist := d.scientists.GetScientist(id)
+
+	job, err := getID(params, "job")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	decoder := json.NewDecoder(req.Body)
+
+	var apply Apply
+	if err := decoder.Decode(&apply); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	candidate := &company.Scientist{
+		ID:              scientist.ID,
+		Name:            scientist.Name,
+		Rating:          scientist.Rating,
+		Counterproposal: apply.Counterproposal,
+	}
+
+	if err := d.company.ApplyScientist(job, candidate); err != nil {
+		d.log.Printf("apply: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {

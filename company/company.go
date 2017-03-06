@@ -8,9 +8,10 @@ import (
 
 // Scientist ...
 type Scientist struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Rating int    `json:"rating"`
+	ID              int     `json:"id"`
+	Name            string  `json:"name"`
+	Rating          int     `json:"rating"`
+	Counterproposal float64 `json:"counterproposal,omitempty"`
 }
 
 // Job ...
@@ -101,5 +102,16 @@ func (c *Company) StartJob(id int, scientists []*Scientist) error {
 	job.Candidates = nil
 	job.Status = "doing"
 
+	return nil
+}
+
+// ApplyScientist ...
+func (c *Company) ApplyScientist(id int, candidate *Scientist) error {
+	if id >= len(c.jobs) {
+		return fmt.Errorf("Job %d not found", id)
+	}
+
+	job := c.jobs[id]
+	job.Candidates = append(job.Candidates, candidate)
 	return nil
 }
