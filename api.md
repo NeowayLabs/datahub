@@ -159,13 +159,13 @@ Obs: job será criado com o status de "pending"
 
 ### Upload de arquivos do job
 
-POST /api/companies/jobs/_id_/upload
+POST /api/companies/jobs/<id>/upload
 
 response: 200 OK
 
 ### Obter dados de um job
 
-GET /api/companies/jobs/_id_
+GET /api/companies/jobs/<id>
 ```json
 {
     "id": 6,
@@ -226,7 +226,7 @@ GET /api/companies/jobs/_id_
 
 ### Iniciar um job
 
-POST /api/companies/jobs/_id_/start
+POST /api/companies/jobs/<id>/start
 ```json
 {
     "scientists": [
@@ -298,7 +298,7 @@ response: 200 OK
 
 ### Lista de jobs do scientists
 
-GET /api/scientists/_id_/jobs
+GET /api/scientists/<id>/jobs
 
 respoonse: 200 OK
 ```json
@@ -372,7 +372,7 @@ respoonse: 200 OK
 
 ### Aceitar um job
 
-POST /api/scientists/_id_/jobs/_id_/apply
+POST /api/scientists/<id>/jobs/<id>/apply
 ```json
 {
     "counterproposal": 20300.00
@@ -381,7 +381,7 @@ POST /api/scientists/_id_/jobs/_id_/apply
 
 ### Vizualizar área de trabalho de um job
 
-GET /api/scientists/_id_/jobs/_id_/workspace
+GET /api/scientists/<id>/jobs/<id>/workspace
 ```json
 {
     "id": 6,
@@ -407,7 +407,7 @@ GET /api/scientists/_id_/jobs/_id_/workspace
 
 ### Upload do codigo R de um scientists para um job
 
-POST /api/scientists/_id_/jobs/_id_/upload
+POST /api/scientists/<id>/jobs/<id>/upload
 
 
 ## Uploads
