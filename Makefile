@@ -3,10 +3,11 @@ version ?= "latest"
 all: build
 
 build:
+	go get ./...
 	go build ./cmd/datahub
 
-run: build
-	./datahub
+run: image
+	docker run -ti --rm --net=host neowaylabs/datahub
 
 image:
 	docker build . -t neowaylabs/datahub
