@@ -4,16 +4,10 @@ Just a POC :-)
 
 # Running
 
-Run:
+You need to have docker installed, after that just run:
 
 ```
-make
-```
-
-After build you can run:
-
-```
-./datahub
+make run
 ```
 
 The server is running locally, to upload a file to it:
