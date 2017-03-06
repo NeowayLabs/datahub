@@ -2,22 +2,32 @@ package company
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 )
 
+// Scientist ...
+type Scientist struct {
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Rating int    `json:"rating"`
+}
+
 // Job ...
 type Job struct {
-	ID          int     `json:"id"`
-	Title       string  `json:"title"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-	Status      string  `json:"status"`
-	LastUpdate  string  `json:"lastUpdate"`
+	ID          int          `json:"id"`
+	Title       string       `json:"title"`
+	Description string       `json:"description"`
+	Price       float64      `json:"price"`
+	Status      string       `json:"status"`
+	LastUpdate  string       `json:"lastUpdate"`
+	Candidates  []*Scientist `json:"candidates"`
+	Scientists  []*Scientist `json:"scientists"`
 }
 
 // Company ...
 type Company struct {
-	jobs []Job
+	jobs []*Job
 }
 
 // NewCompany ...
@@ -26,13 +36,13 @@ func NewCompany() *Company {
 	return &Company{jobs: jobs}
 }
 
-func loadJobs() []Job {
+func loadJobs() []*Job {
 	raw, err := ioutil.ReadFile("./db/company/jobs.json")
 	if err != nil {
 		return nil
 	}
 
-	var jobs []Job
+	var jobs []*Job
 	if err := json.Unmarshal(raw, &jobs); err != nil {
 		return nil
 	}
@@ -40,8 +50,8 @@ func loadJobs() []Job {
 }
 
 // GetJobsByStatus ...
-func (c *Company) GetJobsByStatus(status string) []Job {
-	jobs := make([]Job, 0, len(c.jobs))
+func (c *Company) GetJobsByStatus(status string) []*Job {
+	jobs := make([]*Job, 0, len(c.jobs))
 
 	for _, job := range c.jobs {
 		if job.Status == status {
@@ -53,7 +63,7 @@ func (c *Company) GetJobsByStatus(status string) []Job {
 }
 
 // AddNewJob ...
-func (c *Company) AddNewJob(job Job) {
+func (c *Company) AddNewJob(job *Job) {
 	job.ID = len(c.jobs)
 	job.Status = "pending"
 
@@ -66,5 +76,30 @@ func (c *Company) GetJob(id int) *Job {
 		return nil
 	}
 
-	return &c.jobs[id]
+	return c.jobs[id]
+}
+
+// StartJob ...
+func (c *Company) StartJob(id int, scientists []*Scientist) error {
+	if id >= len(c.jobs) {
+		return fmt.Errorf("Job %d not found", id)
+	}
+
+	job := c.jobs[id]
+
+	job.Scientists = make([]*Scientist, 0, len(scientists))
+
+	for _, scientist := range scientists {
+		for _, candidate := range job.Candidates {
+			if candidate.ID == scientist.ID {
+				job.Scientists = append(job.Scientists, candidate)
+				break
+			}
+		}
+	}
+
+	job.Candidates = nil
+	job.Status = "doing"
+
+	return nil
 }

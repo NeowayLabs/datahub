@@ -2,6 +2,7 @@ package datahub
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -89,9 +90,9 @@ func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, pa
 
 // Jobs ...
 type Jobs struct {
-	Pending []company.Job `json:"pending"`
-	Doing   []company.Job `json:"doing"`
-	Done    []company.Job `json:"done"`
+	Pending []*company.Job `json:"pending"`
+	Doing   []*company.Job `json:"doing"`
+	Done    []*company.Job `json:"done"`
 }
 
 func (d *Server) companiesGetJobs(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
@@ -137,13 +138,27 @@ func (d *Server) companiesCreateJob(w http.ResponseWriter, req *http.Request, _ 
 	var job company.Job
 	if err := decoder.Decode(&job); err != nil {
 		d.log.Printf("unmarshal: error %q", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	d.company.AddNewJob(job)
+	d.company.AddNewJob(&job)
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func getID(params httprouter.Params) (int, error) {
+	s := params.ByName("id")
+	if s == "" {
+		return 0, fmt.Errorf("param: id is empty")
+	}
+
+	id, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, fmt.Errorf("param: id is not a number")
+	}
+
+	return id, nil
 }
 
 func (d *Server) companiesGetJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
@@ -153,13 +168,7 @@ func (d *Server) companiesGetJob(w http.ResponseWriter, req *http.Request, param
 		}
 	}()
 
-	jobID := params.ByName("id")
-	if jobID == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	id, err := strconv.Atoi(jobID)
+	id, err := getID(params)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -185,9 +194,38 @@ func (d *Server) companiesGetJob(w http.ResponseWriter, req *http.Request, param
 	}
 }
 
-func (d *Server) companiesStartJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) companiesStartJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	type Scientists struct {
+		Scientists []*company.Scientist `json:"scientists"`
+	}
+
+	job, err := getID(params)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	decoder := json.NewDecoder(req.Body)
+
+	var scientists Scientists
+	if err := decoder.Decode(&scientists); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := d.company.StartJob(job, scientists.Scientists); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (d *Server) scientistsList(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
