@@ -579,7 +579,7 @@ func (d *Server) scorecheck(predictionfilepath string, resultfilepath string) (f
 			}
 		}
 	}
-	score := float32(int((ok*100/totallines)*100)) / 100
+	score := ok * 100 / totallines
 	d.log.Printf("detected score: %f", score)
 
 	return score, nil
