@@ -60,7 +60,7 @@ func NewServer() *Server {
 	router.GET("/api/scientists/:id/jobs/:job/workspace", d.scientistsGetWorkspace)
 	router.POST("/api/scientists/:id/jobs/:job/upload", d.scientistsUploadCode)
 
-	router.POST("/api/execR", d.execR)
+	router.POST("/api/scientists/:id/jobs/:job/run", d.execR)
 
 	return d
 }
@@ -71,11 +71,18 @@ func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, pa
 		"testset.challenge.csv",
 		"testset.result.csv",
 	}
-
 	jobID := params.ByName("id")
+	d.uploadToJobDir(w, req, uploadFileNames, jobID)
+}
 
+func (d *Server) uploadToJobDir(
+	w http.ResponseWriter,
+	req *http.Request,
+	filenames []string,
+	jobID string,
+) {
 	success := false
-	for _, filename := range uploadFileNames {
+	for _, filename := range filenames {
 		res := d.receiveUpload(req, filename, jobID)
 		if res {
 			success = res
@@ -85,7 +92,7 @@ func (d *Server) companiesUploadJob(w http.ResponseWriter, req *http.Request, pa
 		d.failrequest(
 			w,
 			"no dataset received, expected one of these: %q",
-			uploadFileNames,
+			filenames,
 		)
 		return
 	}
@@ -341,17 +348,22 @@ func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, _ *http.Request, 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-func (d *Server) scientistsUploadCode(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) scientistsUploadCode(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	// FIXME ? : Now concurrent scientists will overwrite each other code and testset.prediction.csv
+	// Perhaps good enough for now ? Only breaks on concurrent scientists working
+	uploadFileNames := []string{
+		"code.r",
+	}
+	jobID := params.ByName("job")
+	d.uploadToJobDir(w, r, uploadFileNames, jobID)
 }
 
 func (d *Server) execR(
 	w http.ResponseWriter,
 	req *http.Request,
-	_ httprouter.Params,
+	params httprouter.Params,
 ) {
-	// TODO: Still not getting stderr
+	//jobID := params.ByName("job")
 	cwd, err := os.Getwd()
 	if err != nil {
 		d.failrequest(w, "getwd: unexpected error %q", err)
@@ -404,9 +416,9 @@ func (d *Server) receiveUpload(
 	}()
 
 	jobdir := d.datadir + "/" + jobID
-	err := os.MkdirAll(jobdir, 0755)
+	err = os.MkdirAll(jobdir, 0755)
 	if err != nil {
-		d.log.Printf("error %q creating data dir %q", err, datadir)
+		d.log.Printf("error %q creating data dir %q", err, jobdir)
 		return false
 	}
 
