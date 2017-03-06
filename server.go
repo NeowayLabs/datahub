@@ -215,9 +215,7 @@ func (d *Server) Handler() http.Handler {
 }
 
 // ListenAndServe ...
-func (d *Server) ListenAndServe(addr string) {
-	d.log.Printf("WebServer running at %q...", addr)
-	if err := http.ListenAndServe(addr, d.router); err != nil {
-		d.log.Printf("error: %q running http server", err)
-	}
+func (d *Server) ListenAndServe(addr string) error {
+	d.log.Printf("WebServer running at %q", addr)
+	return http.ListenAndServe(addr, d.router)
 }

@@ -9,5 +9,5 @@ import (
 func main() {
 	server := datahub.NewServer()
 
-	log.Fatal(Server.ListenAndServe(":8080"))
+	log.Fatal(server.ListenAndServe(":8080"))
 }
