@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "image": "/images/scientists/1.jpg",
+        "name": "Paulo Pizarro",
+        "rating": 2,
+        "likes": 300
+    },
+    {
+        "id": 2,
+        "image": "/images/scientists/2.jpg",
+        "name": "Tiago Katcipis",
+        "rating": 5,
+        "likes": 500
+    },
+    {
+        "id": 3,
+        "image": "/images/scientists/3.jpg",
+        "name": "Juliano Galgaro",
+        "rating": 4,
+        "likes": 400
+    },
+    {
+        "id": 4,
+        "image": "/images/scientists/4.jpg",
+        "name": "Amanda Rosa",
+        "rating": 3,
+        "likes": 100
+    },
+    {
+        "id": 5,
+        "image": "/images/scientists/5.jpg",
+        "name": "Jefferson Amorin",
+        "rating": 5,
+        "likes": 700
+    },
+    {
+        "id": 6,
+        "image": "/images/scientists/6.jpg",
+        "name": "Caio Silva",
+        "rating": 4,
+        "likes": 100
+    }
+]

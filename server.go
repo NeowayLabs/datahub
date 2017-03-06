@@ -11,15 +11,17 @@ import (
 	"strconv"
 
 	"github.com/NeowayLabs/datahub/company"
+	"github.com/NeowayLabs/datahub/scientists"
 	"github.com/julienschmidt/httprouter"
 )
 
 // Server ...
 type Server struct {
-	router  *httprouter.Router
-	datadir string
-	log     *log.Logger
-	company *company.Company
+	router     *httprouter.Router
+	datadir    string
+	log        *log.Logger
+	company    *company.Company
+	scientists *scientists.Scientists
 }
 
 // NewServer ...
@@ -33,12 +35,14 @@ func NewServer() *Server {
 
 	router := httprouter.New()
 	company := company.NewCompany()
+	scientists := scientists.NewScientists()
 
 	d := &Server{
-		router:  router,
-		datadir: datadir,
-		log:     log,
-		company: company,
+		router:     router,
+		datadir:    datadir,
+		log:        log,
+		company:    company,
+		scientists: scientists,
 	}
 
 	router.GET("/api/companies/jobs", d.companiesGetJobs)
@@ -102,17 +106,9 @@ func (d *Server) companiesGetJobs(w http.ResponseWriter, req *http.Request, _ ht
 		}
 	}()
 
-	pending := d.company.GetJobsByStatus("pending")
-	doing := d.company.GetJobsByStatus("doing")
-	done := d.company.GetJobsByStatus("done")
+	scientists := d.scientists.GetScientists()
 
-	jobs := &Jobs{
-		Pending: pending,
-		Doing:   doing,
-		Done:    done,
-	}
-
-	bytes, err := json.Marshal(jobs)
+	bytes, err := json.Marshal(scientists)
 	if err != nil {
 		d.log.Printf("marshal: error %q", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -228,8 +224,13 @@ func (d *Server) companiesStartJob(w http.ResponseWriter, req *http.Request, par
 	w.WriteHeader(http.StatusOK)
 }
 
-func (d *Server) scientistsList(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
+func (d *Server) scientistsList(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
