@@ -427,3 +427,12 @@ POST /api/scientists/_ID_/jobs/_ID_/run
 Before this, all datasets should already been uploaded
 by the company and the R code should be uploaded by the
 statistician.
+
+The response will be a JSON with:
+
+```json
+{
+    "accuracy": 90.123423,
+    "output": "execution output"
+}
+```
