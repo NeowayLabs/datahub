@@ -400,7 +400,7 @@ func (d *Server) execR(
 		d.failrequest(w, "error %q calculating accuracy", err)
 		return
 	}
-
+	// TODO: update scientist workspace accuracy
 	res, err := json.Marshal(map[string]interface{}{
 		"output":   string(output),
 		"accuracy": accuracy,
