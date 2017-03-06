@@ -12,7 +12,7 @@ type Workspace struct {
 	Accuracy    int     `json:"accuracy"`
 	Result      string  `json:"result"`
 	Code        int     `json:"code"`
-	Description float64 `json:"Description"`
+	Description float64 `json:"description"`
 }
 
 // Scientist ...
