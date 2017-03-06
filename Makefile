@@ -1,3 +1,5 @@
+version ?= "latest"
+
 all: build
 
 build:
@@ -5,3 +7,9 @@ build:
 
 run: build
 	./datahub
+
+image:
+	docker build . -t neowaylabs/datahub
+
+publish: image
+	docker push neowaylabs/datahub:$(version)
