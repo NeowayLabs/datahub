@@ -93,7 +93,13 @@ type Jobs struct {
 	Done    []company.Job `json:"done"`
 }
 
-func (d *Server) companiesGetJobs(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+func (d *Server) companiesGetJobs(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
 	pending := d.company.GetJobsByStatus("pending")
 	doing := d.company.GetJobsByStatus("doing")
 	done := d.company.GetJobsByStatus("done")
@@ -118,9 +124,25 @@ func (d *Server) companiesGetJobs(w http.ResponseWriter, _ *http.Request, _ http
 	}
 }
 
-func (d *Server) companiesCreateJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) companiesCreateJob(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	decoder := json.NewDecoder(req.Body)
+
+	var job company.Job
+	if err := decoder.Decode(&job); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	d.company.AddNewJob(job)
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (d *Server) companiesGetJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {

@@ -51,3 +51,11 @@ func (c *Company) GetJobsByStatus(status string) []Job {
 
 	return jobs
 }
+
+// AddNewJob ...
+func (c *Company) AddNewJob(job Job) {
+	job.ID = len(c.jobs)
+	job.Status = "pending"
+
+	c.jobs = append(c.jobs, job)
+}
