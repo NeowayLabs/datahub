@@ -465,7 +465,8 @@ func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, req *http.Request
 }
 
 func (d *Server) companiesUploadCode(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
+	//TODO executar o codigo em R e atualizar os campos do workspace do scientist: accuracy, result, code
+
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
