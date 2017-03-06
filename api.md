@@ -4,10 +4,10 @@
 
 ### Pegar lista de jobs
 
-GET /companies/jobs
+GET /api/companies/jobs
 
 response: 200 OK
-```
+```json
 {
     "pending": [
         {
@@ -110,11 +110,11 @@ response: 200 OK
             "lastUpdate": "2017-03-03",
             "price": 15450.00,
             "scientist": {
-				"id": 2,
-            	"name": "Tiago Katcipis",
-            	"rating": 5,
-            	"accuracy": 80.5
-			},
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5,
+                "accuracy": 80.5
+            },
             "status": "done"
         },
         {
@@ -124,11 +124,11 @@ response: 200 OK
             "lastUpdate": "2017-03-03",
             "price": 15450.00,
             "scientist": {
-				"id": 2,
-            	"name": "Tiago Katcipis",
-            	"rating": 5,
-            	"accuracy": 80.5
-			},
+                "id": 2,
+                "name": "Tiago Katcipis",
+                "rating": 5,
+                "accuracy": 80.5
+            },
             "status": "done"
         }
     ]
@@ -136,19 +136,19 @@ response: 200 OK
 ```
 
 ### Criar novo job
-POST /companies/jobs
-```
+POST /api/companies/jobs
+```json
 {
     "title": "blah blah blah blah",
     "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
     "accuracyRequired": 90.5,
     "deadline": "2017-03-20",
-    "proposedPrice": 15000.00
+    "proposed": 15000.00
 }
 ```
 
 response: 200 OK
-```
+```json
 {
     "id": <id>
 }
@@ -157,13 +157,13 @@ response: 200 OK
 Obs: job será criado com o status de "pending"
 
 ### Upload de arquivos do job
-POST /companies/job/_id_/upload
+POST /api/companies/job/_id_/upload
 
 response: 200 OK
 
-### Pegar um job
-GET /jobs/_id_
-```
+### Recuperar um job
+GET /api/comapnies/jobs/_id_
+```json
 {
     "id": 6,
     "title": "blah blah blah blah",
@@ -171,25 +171,25 @@ GET /jobs/_id_
     "lastUpdate": "2017-03-03",
     "accuracyRequired": 90.5,
     "deadline": "2017-03-20",
-    "proposedPrice": 15000.00,
-	"status": "pending",
+    "proposed": 15000.00,
+    "status": "pending",
     "datasets": {
-        "training": "/files/jobs/6/trainingset.csv",
-        "challenge": "/files/jobs/6/testset.challenge.csv",
-        "result": "/files/jobs/6/testset.result.csv"
+        "training": "/datasets/jobs/6/trainingset.csv",
+        "challenge": "/datasets/jobs/6/testset.challenge.csv",
+        "result": "/datasets/jobs/6/testset.result.csv"
     },
     "candidates": [
         {
             "id": 5,
             "name": "Juliano Galga",
             "rating": 5,
-            "proposedPrice": 15450.00
+            "counterproposal": 15450.00
         },
         {
             "id": 6,
             "name": "Caio Silva",
             "rating": 5,
-            "proposedPrice": 18500.00
+            "counterproposal": 18500.00
         }
     ],
     "scientists": [
@@ -198,84 +198,39 @@ GET /jobs/_id_
             "name": "Juliano Galga",
             "rating": 5,
             "price": 15450.00
-			"solution": {
-            	"accuracy": 80.5,
-    			"result": "/files/job/6/scientists/5/result.csv",
-    			"code": "/files/job/6/scientists/5/code.r",
-				"description": "blah blah blah..."
-			}
+            "solution": {
+                "accuracy": 80.5,
+                "result": "/datasets/job/6/scientists/5/result.csv",
+                "code": "/datasets/job/6/scientists/5/code.r",
+                "description": "blah blah blah..."
+            }
         },
         {
             "id": 6,
             "name": "Caio Silva",
             "price": 18500.00
             "rating": 5,
-			"solution": {
-            	"accuracy": 70.4,
-    			"result": "/files/job/6/scientists/6/result.csv",
-    			"code": "/files/job/6/scientists/6/code.r",
-				"description": "blah blah blah..."
-			}
+            "solution": {
+                "accuracy": 70.4,
+                "result": "/datasets/job/6/scientists/6/result.csv",
+                "code": "/datasets/job/6/scientists/6/code.r",
+                "description": "blah blah blah..."
+            }
         }
     ]
 }
 ```
 
-### Alterar um job
-PUT /jobs/_id_
-```
+### Iniciar um job
+POST /api/companies/jobs/_id_/start
+```json
 {
-    "id": 6,
-    "title": "blah blah blah blah",
-    "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-    "lastUpdate": "2017-03-03",
-    "accuracyRequired": 90.5,
-    "deadline": "2017-03-20",
-    "proposedPrice": 15000.00,
-	"status": "doing",
-    "datasets": {
-        "training": "/files/jobs/6/trainingset.csv",
-        "challenge": "/files/jobs/6/testset.challenge.csv",
-        "result": "/files/jobs/6/testset.result.csv"
-    },
-    "candidates": [
-        {
-            "id": 5,
-            "name": "Juliano Galga",
-            "rating": 5,
-            "proposedPrice": 15450.00
-        },
-        {
-            "id": 6,
-            "name": "Caio Silva",
-            "rating": 5,
-            "proposedPrice": 18500.00
-        }
-    ],
     "scientists": [
         {
             "id": 5,
-            "name": "Juliano Galga",
-            "rating": 5,
-            "price": 15450.00
-			"solution": {
-            	"accuracy": 80.5,
-    			"result": "/files/job/6/scientists/5/result.csv",
-    			"code": "/files/job/6/scientists/5/code.r",
-				"description": "blah blah blah..."
-			}
         },
         {
             "id": 6,
-            "name": "Caio Silva",
-            "price": 18500.00
-            "rating": 5,
-			"solution": {
-            	"accuracy": 70.4,
-    			"result": "/files/job/6/scientists/6/result.csv",
-    			"code": "/files/job/6/scientists/6/code.r",
-				"description": "blah blah blah..."
-			}
         }
     ]
 }
@@ -286,11 +241,11 @@ response: 200 OK
 ## Scientist
 
 ### pegar lista de scientists
-GET /scientists
+GET /api/scientists
 
 response: 200 OK
 
-```
+```json
 [
     {
         "id": 1,
@@ -338,66 +293,106 @@ response: 200 OK
 ```
 
 ### Pegar lista de jobs do scientists
-GET /scientists/jobs
+GET /api/scientists/_id_/jobs
 
 respoonse: 200 OK
 
-```
+```json
 [
-	"new": [
-		{
-			"id": 20,
-			"company": "Neoway Business Solution",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		},
-		{
-			"id": 21,
-			"company": "Neoway Business Solution",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		},
-		{
-			"id": 22,
-			"company": "Facebook",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		}
-	],
-	"myJobs": [
-		{
-			"id": 12,
-			"company": "Netflix",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"accuracy": 70.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		}
-	],
-	"pending": [
-		{
-			"id": 12,
-			"company": "Twitter",
-			"title": "blah blah blah blah",
-			"description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
-			"accuracyRequired": 90.5,
-			"deadline": "2017-03-20",
-			"proposedPrice": 15000.00
-		}
-	]
+    "new": [
+        {
+            "id": 20,
+            "company": "Neoway Business Solution",
+            "title": "blah blah blah blah",
+            "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+            "accuracyRequired": 90.5,
+            "deadline": "2017-03-20",
+            "proposed": 15000.00
+        },
+        {
+            "id": 21,
+            "company": "Neoway Business Solution",
+            "title": "blah blah blah blah",
+            "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+            "accuracyRequired": 90.5,
+            "deadline": "2017-03-20",
+            "proposed": 15000.00
+        },
+        {
+            "id": 22,
+            "company": "Facebook",
+            "title": "blah blah blah blah",
+            "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+            "accuracyRequired": 90.5,
+            "deadline": "2017-03-20",
+            "proposed": 15000.00
+        }
+    ],
+    "pending": [
+        {
+            "id": 12,
+            "company": "Twitter",
+            "title": "blah blah blah blah",
+            "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+            "accuracyRequired": 90.5,
+            "deadline": "2017-03-20",
+            "proposed": 15000.00
+        }
+    ],
+    "doing": [
+        {
+            "id": 12,
+            "company": "Netflix",
+            "title": "blah blah blah blah",
+            "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+            "accuracyRequired": 90.5,
+            "accuracy": 70.5,
+            "deadline": "2017-03-20",
+            "proposed": 15000.00
+        }
+    ],
+    "done": [
+        {
+            "id": 12,
+            "company": "Netflix",
+            "title": "blah blah blah blah",
+            "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+            "accuracyRequired": 90.5,
+            "accuracy": 70.5,
+            "deadline": "2017-03-20",
+            "proposed": 15000.00
+        }
+    ]
 ]
 ```
+
+POST /api/scientists/_id_/apply
+{
+    "jobId": 4
+    "counterproposal": 20300.00    
+}
+
+GET /api/scientists/_id_/jobs/_id_/workspace
+{
+    "id": 6,
+    "title": "blah blah blah blah",
+    "description": "fsdfsd ff sdf sdf sdfsdf sdf sdf",
+    "lastUpdate": "2017-03-03",
+    "accuracyRequired": 90.5,
+    "deadline": "2017-03-20",
+    "proposed": 15000.00,
+    "status": "pending",
+    "datasets": {
+        "training": "/datasets/jobs/6/trainingset.csv",
+        "challenge": "/datasets/jobs/6/testset.challenge.csv",
+    },
+    "workspace": {
+        "accuracy": 80.5,
+        "result": "/datasets/job/6/scientists/5/result.csv",
+        "code": "/datasets/job/6/scientists/5/code.r",
+        "description": "blah blah blah..."
+    }
+}
 
 ## Uploads
 
