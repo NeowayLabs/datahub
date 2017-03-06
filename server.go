@@ -392,11 +392,18 @@ func (d *Server) execR(
 		d.failrequest(w, "exec R: unexpected error %q", err)
 		return
 	}
-	d.log.Printf("executed R code with success, output: %q", output)
+	d.log.Print("executed R code with success")
+	predictionfilepath := jobdir + "/testset.prediction.csv"
+	resultfilepath := jobdir + "/testset.result.csv"
+	accuracy, err := d.scorecheck(predictionfilepath, resultfilepath)
+	if err != nil {
+		d.failrequest(w, "error %q calculating accuracy", err)
+		return
+	}
 
 	res, err := json.Marshal(map[string]interface{}{
 		"output":   string(output),
-		"accuracy": 0.0,
+		"accuracy": accuracy,
 	})
 	if err != nil {
 		d.failrequest(w, "error %q marshalling response", err)
@@ -474,15 +481,10 @@ func (d *Server) scorecheck(predictionfilepath string, resultfilepath string) (f
 	var ok, totallines float32
 
 	for scanresultfile.Scan() {
-		d.log.Printf("reading result line %q", scanresultfile.Text())
 		totallines = totallines + 1
 		if scanpredictionfile.Scan() {
-			d.log.Printf("reading prediction line %q", scanpredictionfile.Text())
 			if scanresultfile.Text() == scanpredictionfile.Text() {
 				ok++
-				d.log.Printf("line equal! %q", scanpredictionfile.Text())
-			} else {
-				d.log.Printf("line NOT equal! %q", scanpredictionfile.Text())
 			}
 		}
 	}
