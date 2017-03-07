@@ -339,14 +339,137 @@ jobs:
 	}
 }
 
-func (d *Server) scientistsApplyJob(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+// Apply ...
+type Apply struct {
+	Counterproposal float64 `json:"counterproposal"`
 }
 
-func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	//TODO
-	w.WriteHeader(http.StatusNotImplemented)
+func (d *Server) scientistsApplyJob(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	id, err := getID(params, "id")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	scientist := d.scientists.GetScientist(id)
+
+	job, err := getID(params, "job")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	decoder := json.NewDecoder(req.Body)
+
+	var apply Apply
+	if err := decoder.Decode(&apply); err != nil {
+		d.log.Printf("unmarshal: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	candidate := &company.Scientist{
+		ID:              scientist.ID,
+		Name:            scientist.Name,
+		Rating:          scientist.Rating,
+		Counterproposal: apply.Counterproposal,
+	}
+
+	if err := d.company.ApplyScientist(job, candidate); err != nil {
+		d.log.Printf("apply: error %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (d *Server) scientistsGetWorkspace(w http.ResponseWriter, req *http.Request, params httprouter.Params) {
+	// Workspace ...
+	type Workspace struct {
+		ID               int               `json:"id"`
+		Title            string            `json:"title"`
+		Description      string            `json:"description"`
+		Proposed         float64           `json:"proposed"`
+		AccuracyRequired float64           `json:"accuracyRequired"`
+		Deadline         string            `json:"deadline"`
+		Status           string            `json:"status"`
+		LastUpdate       string            `json:"lastUpdate"`
+		Workspace        company.Workspace `json:"workspace"`
+	}
+
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			d.log.Printf("body close: error %q", err)
+		}
+	}()
+
+	scientistID, err := getID(params, "id")
+	if err != nil {
+		d.log.Printf("params: %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	jobID, err := getID(params, "job")
+	if err != nil {
+		d.log.Printf("params: %q", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	job := d.company.GetJob(jobID)
+	if job == nil {
+		d.log.Printf("job %d not found", jobID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	var scientist *company.Scientist
+
+	for _, sc := range job.Scientists {
+		if sc.ID == scientistID {
+			scientist = sc
+			break
+		}
+	}
+
+	if scientist == nil {
+		d.log.Printf("scientist %d not found", scientistID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	workspace := &Workspace{
+		ID:               job.ID,
+		Title:            job.Title,
+		Description:      job.Description,
+		Proposed:         job.Proposed,
+		AccuracyRequired: job.AccuracyRequired,
+		Deadline:         job.Deadline,
+		Status:           job.Status,
+		LastUpdate:       job.LastUpdate,
+		Workspace:        scientist.Workspace,
+	}
+
+	bytes, err := json.Marshal(workspace)
+	if err != nil {
+		d.log.Printf("marshal: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(bytes); err != nil {
+		d.log.Printf("write: error %q", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func (d *Server) scientistsUploadCode(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
